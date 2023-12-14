@@ -309,6 +309,7 @@ public:
 	/// particle is destroyed.
 	void DestroyParticle(int32 index, bool callDestructionListener);
 
+	void DestroyParticleGroup(b2ParticleGroup* group);
 	/// Destroy the Nth oldest particle in the system.
 	/// The particle is removed after the next b2World::Step().
 	/// @param Index of the Nth oldest particle to destroy, 0 will destroy the
@@ -596,6 +597,9 @@ public:
 	/// destroyed in the future, values <= 0.0f indicate the particle has an
 	/// infinite lifetime.
 	float32 GetParticleLifetime(const int32 index);
+	
+	float32 GetParticleMass() const;
+	float32 GetParticleInvMass() const;
 
 	/// Enable / disable destruction of particles in CreateParticle() when
 	/// no more particles can be created due to a prior call to
@@ -661,10 +665,13 @@ public:
 	/// @param force the world force vector, usually in Newtons (N).
 	void ApplyForce(int32 firstIndex, int32 lastIndex, const b2Vec2& force);
 
+	void ApplyForceToSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float forceX, float forceY);
+	void ApplyLinearImpulseToSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float forceX, float forceY);
 	/// Get the next particle-system in the world's particle-system list.
 	b2ParticleSystem* GetNext();
 	const b2ParticleSystem* GetNext() const;
 
+	
 	/// Query the particle system for all particles that potentially overlap
 	/// the provided AABB. b2QueryCallback::ShouldQueryParticleSystem is
 	/// ignored.
@@ -896,7 +903,6 @@ private:
 		const b2Shape* const* shapes, int32 shapeCount,
 		const b2ParticleGroupDef& groupDef, const b2Transform& xf);
 	int32 CloneParticle(int32 index, b2ParticleGroup* group);
-	void DestroyParticleGroup(b2ParticleGroup* group);
 
 	void UpdatePairsAndTriads(
 		int32 firstIndex, int32 lastIndex, const ConnectionFilter& filter);
@@ -1003,8 +1009,6 @@ private:
 	float32 GetCriticalVelocitySquared(const b2TimeStep& step) const;
 	float32 GetCriticalPressure(const b2TimeStep& step) const;
 	float32 GetParticleStride() const;
-	float32 GetParticleMass() const;
-	float32 GetParticleInvMass() const;
 
 	// Get the world's contact filter if any particles with the
 	// b2_contactFilterParticle flag are present in the system.

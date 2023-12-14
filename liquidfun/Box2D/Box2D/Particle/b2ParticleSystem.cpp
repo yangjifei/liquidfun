@@ -4482,6 +4482,38 @@ void b2ParticleSystem::ApplyForce(int32 firstIndex, int32 lastIndex,
 	}
 }
 
+
+void b2ParticleSystem::ApplyForceToSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float forceX, float forceY)
+{
+        b2Vec2 force(forceX, forceY);
+
+        // 确保我们不试图对不能移动的粒子（如墙粒子）应用力。
+        #if B2_ASSERT_ENABLED
+        uint32 flags = 0;
+        for (int32_t i = 0; i < indexArray[0]; ++i)
+        {
+            int32_t particleIndex = indexArray[i + 1];
+            flags |= m_flagsBuffer.data[particleIndex];
+        }
+        b2Assert(ForceCanBeApplied(flags));
+        #endif
+
+        // 如果力对粒子没有实际作用，提前返回（优化）。
+        const b2Vec2 distributedForce = force / static_cast<float32>(indexArray[0]);
+        if (IsSignificantForce(distributedForce))
+        {
+            PrepareForceBuffer();
+
+            // 将力分布到所有粒子上。
+            for (int32_t i = 0; i < indexArray[0]; ++i)
+            {
+                int32_t particleIndex = indexArray[i + 1];
+				m_forceBuffer[particleIndex] += distributedForce;
+            }
+        }
+    }
+
+
 void b2ParticleSystem::ParticleApplyForce(int32 index, const b2Vec2& force)
 {
 	if (IsSignificantForce(force) &&
@@ -4503,6 +4535,18 @@ void b2ParticleSystem::ApplyLinearImpulse(int32 firstIndex, int32 lastIndex,
 		m_velocityBuffer.data[i] += velocityDelta;
 	}
 }
+
+void b2ParticleSystem::ApplyLinearImpulseToSelectedParticles(b2ParticleSystem* particles,const int32_t* indexArray, float forceX, float forceY)
+{
+    b2Vec2 impulse(forceX, forceY);
+    const b2Vec2 velocityDelta = impulse / (static_cast<float32>(indexArray[0])* GetParticleMass());
+    for (int32_t i = 0; i < indexArray[0]; ++i)
+    {
+        int32_t particleIndex = indexArray[i + 1];
+		m_velocityBuffer.data[particleIndex] += velocityDelta;
+    }
+}
+
 
 void b2ParticleSystem::QueryAABB(b2QueryCallback* callback,
 								 const b2AABB& aabb) const

@@ -179,7 +179,7 @@ struct b2ParticleSystemDef
 		destroyByAge = true;
 		lifetimeGranularity = 1.0f / 60.0f;
 	}
-
+	int index;
 	/// Enable strict Particle/Body contact check.
 	/// See SetStrictContactCheck for details.
 	bool strictContactCheck;
@@ -281,6 +281,7 @@ struct b2ParticleSystemDef
 class b2ParticleSystem
 {
 public:
+	int32 index;
 	/// Create a particle whose properties have been defined.
 	/// No reference to the definition is retained.
 	/// A simulation step must occur before it's possible to interact with a
@@ -744,6 +745,8 @@ private:
 	b2ExceptionType IsBufCopyValid(int startIndex, int numParticles,
 								   int copySize, int bufSize) const;
 #endif // LIQUIDFUN_EXTERNAL_LANGUAGE_API
+
+	int *GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation);
 
 private:
 	friend class b2World;

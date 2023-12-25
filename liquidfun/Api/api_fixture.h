@@ -2,6 +2,7 @@
 #include "Box2D/Particle/b2ParticleSystem.h"
 #include "Box2D/Dynamics/b2Fixture.h"
 #include <vector>
+#include "api.h"
 
 extern "C" {
 
@@ -25,7 +26,7 @@ extern "C" {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         b2Vec2 position = fixture->GetBody()->GetPosition(); // Use GetPosition() for the body's origin
 
-        float* info = new float[3];
+        float* info = GetFloatBuffer(3);
         info[0] = position.x;
         info[1] = position.y;
         info[2] = fixture->GetBody()->GetAngle();

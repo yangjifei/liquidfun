@@ -2,122 +2,84 @@
 #include "Box2D/Particle/b2ParticleSystem.h"
 #include "Box2D/Dynamics/b2Fixture.h"
 #include "Box2D/Testbed/Tests/RayCast.h"
-#include <vector>
-#define IntPtr void *
+#include "api.h"
 
-extern "C"
+// 光线投射结果的结构体
+struct RaycastResult
 {
-    class MyRaycastCallback : public b2RayCastCallback
+    int bodyIndex;
+    int fixtureIndex;
+    float posX;
+    float posY;
+    float normalX;
+    float normalY;
+    float fraction;
+};
+
+// 创建光线投射回调
+class RaycastCallback : public b2RayCastCallback
+{
+public:
+    b2GrowableBuffer<RaycastResult> results;
+    bool shouldQueryParticleSystem = false;
+    int fixtureCount;
+    int particleCount;
+    RaycastCallback(b2GrowableBuffer<RaycastResult> results, bool shouldQueryParticleSystem = false)
+        : results(results), shouldQueryParticleSystem(shouldQueryParticleSystem) {}
+
+    float32 ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction) override
     {
-    public:
-        MyRaycastCallback() : m_fixture(nullptr) {}
-
-        float32 ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction) override
-        {
-            // Handle the ray-cast result here
-            // The callback will be called for each fixture intersected by the ray
-            // 'fixture' is the fixture that was hit
-            // 'point' is the point in world coordinates where the ray hits the fixture
-            // 'normal' is the normal vector at the hit point
-            // 'fraction' is the fraction along the original ray the intersection point is located
-
-            // For simplicity, this example just stores the first fixture hit by the ray
-            m_fixture = fixture;
-            m_point = point;
-            m_normal = normal;
-            m_fraction = fraction;
-
-            // Returning 1.0f allows the ray-casting to continue and check for other fixtures
-            return 1.0f;
-        }
-
-        // Accessors to retrieve the results
-        b2Fixture *GetFixture() const { return m_fixture; }
-        const b2Vec2 &GetPoint() const { return m_point; }
-        const b2Vec2 &GetNormal() const { return m_normal; }
-        float32 GetFraction() const { return m_fraction; }
-
-    private:
-        b2Fixture *m_fixture;
-        b2Vec2 m_point;
-        b2Vec2 m_normal;
-        float32 m_fraction;
-    };
-
-    float *RaycastWorld(IntPtr worldPointer, float x1, float y1, float x2, float y2, int mode, bool shouldQueryParticleSystem)
-    {
-        b2World *world = reinterpret_cast<b2World *>(worldPointer);
-        b2Vec2 p1(x1, y1);
-        b2Vec2 p2(x2, y2);
-
-        MyRaycastCallback callback;
-        // Raycasting with termination callback
-        if (mode == 0)
-        {
-            world->RayCast(&callback, p1, p2);
-        }
-        // Raycasting with fraction
-        else if (mode == 1)
-        {
-            world->RayCast(&callback, p1, p2);
-        }
-        // Raycasting with filtering
-        else if (mode == -1)
-        {
-            b2RayCastInput input;
-            input.p1 = p1;
-            input.p2 = p2;
-            input.maxFraction = 1.0f;
-
-            b2RayCastOutput output;
-            for (b2Body *body = world->GetBodyList(); body; body = body->GetNext())
-            {
-                for (b2Fixture *fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
-                {
-                    if (shouldQueryParticleSystem || !fixture->IsLiquidFunParticleSystem())
-                    {
-                        if (fixture->RayCast(&output, input, 0))
-                        {
-                            callback.ReportFixture(fixture, output.p1, output.p2, output.normal, output.fraction);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Collect results from the callback
-        std::vector<float> results;
-        results.push_back(callback.fixtureHits.size());  // Number of fixture hits
-        results.push_back(callback.particleHits.size()); // Number of particle hits
-
-        // Collect fixture hits
-        for (const auto &hit : callback.fixtureHits)
-        {
-            results.push_back(static_cast<float>(hit.bodyIndex));
-            results.push_back(static_cast<float>(hit.fixtureIndex));
-            results.push_back(hit.posX);
-            results.push_back(hit.posY);
-            results.push_back(hit.normalX);
-            results.push_back(hit.normalY);
-            results.push_back(hit.fraction);
-        }
-
-        // Collect particle hits
-        for (const auto &hit : callback.particleHits)
-        {
-            results.push_back(static_cast<float>(hit.systemIndex));
-            results.push_back(static_cast<float>(hit.particleIndex));
-            results.push_back(hit.posX);
-            results.push_back(hit.posY);
-            results.push_back(hit.normalX);
-            results.push_back(hit.normalY);
-            results.push_back(hit.fraction);
-        }
-
-        // Convert the results vector to a float array
-        float *resultArray = new float[results.size()];
-        std::copy(results.begin(), results.end(), resultArray);
-
-        return resultArray;
+        fixtureCount++;
+        RaycastResult* result = &(results.Append());
+        result->bodyIndex = reinterpret_cast<int>(fixture->GetBody()->GetUserData());
+        result->fixtureIndex = reinterpret_cast<int>(fixture->GetUserData());
+        result->posX = point.x;
+        result->posY = point.y;
+        result->normalX = normal.x;
+        result->normalY = normal.y;
+        result->fraction = fraction;
+        return 1.0f; // 继续检查更多的fixture
     }
+
+    float32 ReportParticle(const b2ParticleSystem* particleSystem, int32 index, const b2Vec2& point, const b2Vec2& normal, float32 fraction) override {
+        particleCount++;
+        RaycastResult* result = &(results.Append());
+        result->bodyIndex = reinterpret_cast<int>(particleSystem->GetUserDataBuffer()[index]);
+        result->fixtureIndex = -1;  // 在粒子与fixture的碰撞中，fixtureIndex为-1
+        result->posX = point.x;
+        result->posY = point.y;
+        result->normalX = normal.x;
+        result->normalY = normal.y;
+        result->fraction = fraction;
+        return 1.0f;  // 继续检查更多的粒子
+    }
+
+    bool ShouldQueryParticleSystem(const b2ParticleSystem *particleSystem) override
+    {
+        return shouldQueryParticleSystem;
+    }
+};
+
+// C++函数，用于执行液体物理引擎中的光线投射
+extern "C" void *RaycastWorld(b2World *world, float x1, float y1, float x2, float y2, int mode, bool shouldQueryParticleSystem)
+{
+    // 设置光线投射的参数
+    b2Vec2 p1(x1, y1);
+    b2Vec2 p2(x2, y2);
+
+    // 初始化光线投射结果
+    b2GrowableBuffer<RaycastResult> results(world->m_blockAllocator);
+
+    // 创建光线投射回调实例
+    RaycastCallback callback(results);
+
+    // 执行光线投射
+    world->RayCast(&callback, p1, p2);
+
+    auto r = GetFloatBuffer(2+7*(results.GetCount()));
+    r[0]=callback.fixtureCount;
+    r[1]=callback.particleCount;
+    memcpy(r+2, results.Data(), 7*results.GetCount()*sizeof(float));
+
+    return r;
 }

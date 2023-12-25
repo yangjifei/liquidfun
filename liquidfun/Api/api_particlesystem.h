@@ -2,29 +2,31 @@
 #include "Box2D/Particle/b2ParticleSystem.h"
 #include "Box2D/Dynamics/b2Fixture.h"
 #include <vector>
+#include <cstdint>
+#include "api.h"
 #define IntPtr void *
 extern "C"
 {
     // CreateParticleSystem
-    b2ParticleSystem *CreateParticleSystem(b2World *world, float radius, float damping, float gravityScale, int number)
+    b2ParticleSystem *CreateParticleSystem(b2World *world, float radius, float damping, float gravityScale, int index)
     {
         b2ParticleSystemDef particleSystemDef;
         particleSystemDef.radius = radius;
         particleSystemDef.dampingStrength = damping;
         particleSystemDef.gravityScale = gravityScale;
-        particleSystemDef.maxCount = number;
+        particleSystemDef.index =index;
 
         return world->CreateParticleSystem(&particleSystemDef);
     }
 
     // CreateParticleSystem2
-    b2ParticleSystem *CreateParticleSystem2(b2World *world, float radius, float damping, float gravityScale, int number, float tennorm, float tenpres, float viscstr)
+    b2ParticleSystem *CreateParticleSystem2(b2World *world, float radius, float damping, float gravityScale, int index, float tennorm, float tenpres, float viscstr)
     {
         b2ParticleSystemDef particleSystemDef;
         particleSystemDef.radius = radius;
         particleSystemDef.dampingStrength = damping;
         particleSystemDef.gravityScale = gravityScale;
-        particleSystemDef.maxCount = number;
+        particleSystemDef.index =index;
         particleSystemDef.surfaceTensionNormalStrength = tennorm;
         particleSystemDef.surfaceTensionPressureStrength = tenpres;
         particleSystemDef.viscousStrength = viscstr;
@@ -33,10 +35,9 @@ extern "C"
     }
 
     // SetParticleSystemIndex
-    void SetParticleSystemIndex(b2ParticleSystem *particleSystem, int userData)
+    void SetParticleSystemIndex(b2ParticleSystem *particleSystem, int index)
     {
-        // Assuming you have a structure or method to store user data in particle system
-        particleSystem->GetParticleHandleFromIndex(reinterpret_cast<void *>(userData));
+        particleSystem->index = index;
     }
 
     // GetParticleIterations
@@ -51,7 +52,7 @@ extern "C"
         const b2Vec2 *positions = particleSystem->GetPositionBuffer();
         int particleCount = particleSystem->GetParticleCount();
         int arraySize = 2 * particleCount + 1;
-        float *result = new float[arraySize];
+        float *result = GetFloatBuffer(arraySize);
         result[0] = static_cast<float>(particleCount);
 
         for (int i = 0; i < particleCount; ++i)
@@ -70,7 +71,7 @@ extern "C"
         const b2ParticleColor *colors = particleSystem->GetColorBuffer();
         int particleCount = particleSystem->GetParticleCount();
         int arraySize = 6 * particleCount + 1;
-        float *result = new float[arraySize];
+        float *result = GetFloatBuffer(arraySize);
         result[0] = static_cast<float>(particleCount);
 
         for (int i = 0; i < particleCount; ++i)
@@ -89,14 +90,15 @@ extern "C"
     // GetParticlesDetails
     float *GetParticlesDetails(b2ParticleSystem *particleSystem, bool position, bool color, bool age, bool weight, bool velocity, bool userdata)
     {
-        // Assuming you have corresponding methods to get age, weight, velocity, and user data
-        // You may need to modify this based on the actual Box2D API for particle properties
         const b2Vec2 *positions = particleSystem->GetPositionBuffer();
         const b2ParticleColor *colors = particleSystem->GetColorBuffer();
-        const int32 *indices = particleSystem->GetIndexBuffer();
+        const int32 *lifetimes = particleSystem->GetExpirationTimeBuffer();
+        const float32 *weights = particleSystem->GetWeightBuffer();
+        const b2Vec2 *velocities = particleSystem->GetVelocityBuffer();
+        const void **userDatas = particleSystem->GetUserDataBuffer();
         int particleCount = particleSystem->GetParticleCount();
         int arraySize = (position ? 2 : 0) + (color ? 4 : 0) + (age ? 1 : 0) + (weight ? 1 : 0) + (velocity ? 2 : 0) + (userdata ? 1 : 0) + 1;
-        float *result = new float[arraySize];
+        float *result = GetFloatBuffer(arraySize);
         result[0] = static_cast<float>(particleCount);
 
         int currentIndex = 1;
@@ -114,8 +116,24 @@ extern "C"
                 result[currentIndex++] = colors[i].b;
                 result[currentIndex++] = colors[i].a;
             }
-            // Add other particle details based on the parameters
-            // ...
+            if (age)
+            {
+                result[currentIndex++] = lifetimes[i];
+            }
+            if (weight)
+            {
+                result[currentIndex++] = weights[i];
+            }
+            if (velocity)
+            {
+                result[currentIndex++] = velocities[i].x;
+                result[currentIndex++] = velocities[i].y;
+            }
+            if (userdata)
+            {
+                int32 userDataFloat = reinterpret_cast<int>(userDatas[i]);
+                result[currentIndex++] = userDataFloat;
+            }
         }
 
         return result;
@@ -169,8 +187,7 @@ extern "C"
     {
         b2Transform transform;
         transform.SetIdentity();
-        transform.SetPosition(b2Vec2(shapeX, shapeY));
-        transform.SetRotation(shapeRotation);
+        transform.Set(b2Vec2(shapeX, shapeY),shapeRotation);
 
         return particleSystem->DestroyParticlesInShape(*shape, transform, callDestructionListener);
     }
@@ -178,26 +195,7 @@ extern "C"
     // GetParticlesInShape
     int *GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation)
     {
-        b2Transform transform;
-        transform.SetIdentity();
-        transform.SetPosition(b2Vec2(shapeX, shapeY));
-        transform.SetRotation(shapeRotation);
-
-        b2ParticleSystem::InsideBoundsEnumerator enumerator;
-        b2AABB aabb;
-        shape->ComputeAABB(&aabb, transform, 0);
-        int32 *indices = new int32[particleSystem->GetParticleCount()];
-        int32 count = particleSystem->GetInsideBoundsEnumerator(aabb).GetIndices(indices, particleSystem->GetParticleCount());
-        int *result = new int[count + 1];
-        result[0] = count;
-
-        for (int i = 0; i < count; ++i)
-        {
-            result[i + 1] = indices[i];
-        }
-
-        delete[] indices;
-        return result;
+        return particleSystem->GetParticlesInShape(world, particleSystem, shape, shapeX, shapeY, shapeRotation);
     }
 
     // SetDestructionByAge
@@ -236,42 +234,41 @@ extern "C"
     // GetParticleSystemContacts
     int *GetParticleSystemContacts(b2ParticleSystem *particleSystem)
     {
-        b2ParticleContact *contacts = particleSystem->GetParticleContacts();
-        int32 count = particleSystem->GetParticleContactCount();
-        int *result = new int[count * 4 + 1];
+        auto userDataBuffer = particleSystem->GetUserDataBuffer();
+        auto m_contactBuffer = particleSystem->GetContacts();
+        int32 count = particleSystem->GetContactCount();
+        int *result = GetIntBuffer(count * 4 + 1);
         result[0] = count;
 
         for (int i = 0; i < count; ++i)
         {
-            result[4 * i + 1] = contacts[i].GetIndexA();
-            result[4 * i + 2] = contacts[i].GetIndexB();
-            result[4 * i + 3] = static_cast<int>(contacts[i].GetUserDataA());
-            result[4 * i + 4] = static_cast<int>(contacts[i].GetUserDataB());
+            result[4 * i + 1] = m_contactBuffer[i].GetIndexA();
+            result[4 * i + 2] = m_contactBuffer[i].GetIndexB();
+            result[4 * i + 3] = reinterpret_cast<int>(userDataBuffer[m_contactBuffer[i].GetIndexA()]);
+            result[4 * i + 4] = reinterpret_cast<int>(userDataBuffer[m_contactBuffer[i].GetIndexB()]);
         }
-
         return result;
     }
 
     // GetParticleSystemBodyContacts
     float *GetParticleSystemBodyContacts(b2ParticleSystem *particleSystem)
     {
-        b2ParticleBodyContact *contacts = particleSystem->GetBodyContacts();
+        auto userDataBuffer = particleSystem->GetUserDataBuffer();
+        auto m_contactBuffer = particleSystem->GetBodyContacts();
         int32 count = particleSystem->GetBodyContactCount();
-        int arraySize = 7 * count + 1;
-        float *result = new float[arraySize];
+        float *result = GetFloatBuffer(count * 4 + 1);
         result[0] = count;
 
         for (int i = 0; i < count; ++i)
         {
-            result[7 * i + 1] = static_cast<float>(contacts[i].index);
-            result[7 * i + 2] = static_cast<float>(contacts[i].userData);
-            result[7 * i + 3] = static_cast<float>(contacts[i].bodyUserData);
-            result[7 * i + 4] = static_cast<float>(contacts[i].fixtureUserData);
-            result[7 * i + 5] = contacts[i].normal.x;
-            result[7 * i + 6] = contacts[i].normal.y;
-            result[7 * i + 7] = contacts[i].weight;
+            result[7 * i + 1] = static_cast<float>(m_contactBuffer[i].index);
+            result[7 * i + 2] = reinterpret_cast<int>(userDataBuffer[m_contactBuffer[i].index]);
+            result[7 * i + 3] = reinterpret_cast<int>(m_contactBuffer[i].body->GetUserData());
+            result[7 * i + 4] = reinterpret_cast<int>(m_contactBuffer[i].fixture->GetUserData());
+            result[7 * i + 5] = m_contactBuffer[i].normal.x;
+            result[7 * i + 6] = m_contactBuffer[i].normal.y;
+            result[7 * i + 7] = m_contactBuffer[i].weight;
         }
-
         return result;
     }
 
@@ -282,131 +279,29 @@ extern "C"
     }
 
     // GetParticleGroupPointers
-    b2ParticleGroup **GetParticleGroupPointers(b2ParticleSystem *particleSystem)
+    b2ParticleGroup *  const* GetParticleGroupPointers(b2ParticleSystem *particleSystem)
     {
-        return particleSystem->GetParticleGroups();
+        return particleSystem->GetGroupBuffer();
     }
 
     // GetParticleGroupPointerForLargestGroup
-    b2ParticleGroup *GetParticleGroupPointerForLargestGroup(b2ParticleSystem *particleSystem)
+    b2ParticleGroup* GetParticleGroupPointerForLargestGroup(b2ParticleSystem* particleSystem)
     {
-        return particleSystem->GetLargestParticleGroup();
-    }
+        b2ParticleGroup* largestGroup = nullptr;
+        int32 maxParticleCount = 0;
 
-    // LiquidFunAPI.cpp (continued)
-
-    // SetAllParticleFlags
-    void SetAllParticleFlags(b2ParticleSystem *particleSystem, int particleFlags)
-    {
-        particleSystem->SetAllParticleFlags(particleFlags);
-    }
-
-    // SetParticleFlagsUpToLimit
-    void SetParticleFlagsUpToLimit(b2ParticleSystem *particleSystem, int particleFlags, int upperBound)
-    {
-        particleSystem->SetParticleFlagsUpToLimit(particleFlags, upperBound);
-    }
-
-    // SetDesctructionByAge
-    void SetDestructionByAge(IntPtr particleSystemPointer, bool isSet)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        particleSystem->SetDestructionByAge(isSet);
-    }
-
-    // GetDestructionByAge
-    bool GetDestructionByAge(IntPtr particleSystemPointer)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        return particleSystem->GetDestructionByAge();
-    }
-
-    // SetAllParticleLifetimes
-    void SetAllParticleLifetimes(IntPtr particleSystemPointer, float lifetime)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        for (int i = 0; i < particleSystem->GetParticleCount(); ++i)
+        // 迭代粒子组
+        for (b2ParticleGroup* group = particleSystem->GetParticleGroupList(); group; group = group->GetNext())
         {
-            particleSystem->SetParticleLifetime(i, lifetime);
-        }
-    }
-
-    // GetMaxParticleCount
-    int GetMaxParticleCount(IntPtr particleSystemPointer)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        return particleSystem->GetMaxParticleCount();
-    }
-
-    // SetMaxParticleCount
-    void SetMaxParticleCount(IntPtr particleSystemPointer, int maxParticleCount)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        particleSystem->SetMaxParticleCount(maxParticleCount);
-    }
-
-    // GetParticleSystemContacts
-    int *GetParticleSystemContacts(IntPtr particleSystemPointer)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        b2ParticleContact *contacts = particleSystem->GetParticleContacts();
-        int32 count = particleSystem->GetParticleContactCount();
-        int *result = new int[count * 4 + 1];
-        result[0] = count;
-
-        for (int i = 0; i < count; ++i)
-        {
-            result[4 * i + 1] = contacts[i].GetIndexA();
-            result[4 * i + 2] = contacts[i].GetIndexB();
-            result[4 * i + 3] = static_cast<int>(contacts[i].GetUserDataA());
-            result[4 * i + 4] = static_cast<int>(contacts[i].GetUserDataB());
+            int32 particleCount = group->GetParticleCount();
+            if (particleCount > maxParticleCount)
+            {
+                maxParticleCount = particleCount;
+                largestGroup = group;
+            }
         }
 
-        return result;
+        return largestGroup;
     }
 
-    // GetParticleSystemBodyContacts
-    float *GetParticleSystemBodyContacts(IntPtr particleSystemPointer)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        b2ParticleBodyContact *contacts = particleSystem->GetBodyContacts();
-        int32 count = particleSystem->GetBodyContactCount();
-        int arraySize = 7 * count + 1;
-        float *result = new float[arraySize];
-        result[0] = count;
-
-        for (int i = 0; i < count; ++i)
-        {
-            result[7 * i + 1] = static_cast<float>(contacts[i].index);
-            result[7 * i + 2] = static_cast<float>(contacts[i].userData);
-            result[7 * i + 3] = static_cast<float>(contacts[i].bodyUserData);
-            result[7 * i + 4] = static_cast<float>(contacts[i].fixtureUserData);
-            result[7 * i + 5] = contacts[i].normal.x;
-            result[7 * i + 6] = contacts[i].normal.y;
-            result[7 * i + 7] = contacts[i].weight;
-        }
-
-        return result;
-    }
-
-    // GetParticleGroupCount
-    int GetParticleGroupCount(IntPtr particleSystemPointer)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        return particleSystem->GetParticleGroupCount();
-    }
-
-    // GetParticleGroupPointers
-    b2ParticleGroup **GetParticleGroupPointers(IntPtr particleSystemPointer)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        return particleSystem->GetParticleGroups();
-    }
-
-    // GetParticleGroupPointerForLargestGroup
-    b2ParticleGroup *GetParticleGroupPointerForLargestGroup(IntPtr particleSystemPointer)
-    {
-        b2ParticleSystem *particleSystem = reinterpret_cast<b2ParticleSystem *>(particleSystemPointer);
-        return particleSystem->GetLargestParticleGroup();
-    }
 }

@@ -3,6 +3,7 @@
 #include "Box2D/Dynamics/b2Fixture.h"
 #include "Box2D/Testbed/Tests/RayCast.h"
 #include <vector>
+#include "api.h"
 #define IntPtr void *
 
 extern "C"
@@ -104,7 +105,7 @@ extern "C"
         b2MassData massData;
         shape->ComputeMass(&massData, 1.0f);
 
-        float *centroidArray = new float[2];
+        float *centroidArray = GetFloatBuffer(2);
         centroidArray[0] = massData.center.x;
         centroidArray[1] = massData.center.y;
 

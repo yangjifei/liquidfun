@@ -50,6 +50,9 @@ public:
 
 	/// Destruct the world. All physics entities are destroyed and all heap memory is released.
 	~b2World();
+	
+	b2BlockAllocator m_blockAllocator;
+	b2StackAllocator m_stackAllocator;
 
 	/// Register a destruction listener. The listener is owned by you and must
 	/// remain in scope.
@@ -308,8 +311,6 @@ private:
 
 	void DrawParticleSystem(const b2ParticleSystem& system);
 
-	b2BlockAllocator m_blockAllocator;
-	b2StackAllocator m_stackAllocator;
 
 	int32 m_flags;
 

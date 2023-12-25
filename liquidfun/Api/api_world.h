@@ -11,6 +11,9 @@ extern "C" {
 
     // End
     int End(b2World* world) {
+        if(world->GetContactManager().m_contactListener!=NULL){
+            delete world->GetContactManager().m_contactListener;
+        }
         delete world;
         return 0;
     }

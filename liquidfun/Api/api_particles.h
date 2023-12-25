@@ -2,6 +2,7 @@
 #include "Box2D/Particle/b2ParticleSystem.h"
 #include "Box2D/Dynamics/b2Fixture.h"
 #include <vector>
+#include "api.h"
 
 extern "C"
 {
@@ -94,7 +95,7 @@ extern "C"
         int32_t numParticles = indexArray[0];
         int32_t numInfoPerParticle = 9; // x, y, r, g, b, a, age, weight, userdata
 
-        float* details = new float[numParticles * numInfoPerParticle];
+        float* details = GetFloatBuffer(numParticles * numInfoPerParticle);
 
         for (int32_t i = 0; i < numParticles; ++i)
         {

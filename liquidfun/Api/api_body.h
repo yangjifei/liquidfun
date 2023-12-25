@@ -2,6 +2,7 @@
 #include "Box2D/Particle/b2ParticleSystem.h"
 #include "Box2D/Dynamics/b2Fixture.h"
 #include <vector>
+#include "api.h"
 
 extern "C" {
 
@@ -36,12 +37,15 @@ extern "C" {
     }
 
     // GetAllBodyInfo
-    b2Vec3* GetAllBodyInfo(b2Body** bodyArray, int numBodies) {
-        b2Vec3* bodyInfoArray = new b2Vec3[numBodies];
+    void* GetAllBodyInfo(b2Body** bodyArray, int numBodies) {
+        auto result = GetFloatBuffer(numBodies * 3);
         for (int i = 0; i < numBodies; ++i) {
-            bodyInfoArray[i] = GetBodyInfo(bodyArray[i]);
+            b2Transform transform = bodyArray[i]->GetTransform();
+            result[3 * i + 0] = transform.p.x;
+            result[3 * i + 1] = transform.p.y;
+            result[3 * i + 2] = transform.q.GetAngle();
         }
-        return bodyInfoArray;
+        return result;
     }
 
     // SetBodyAwake
@@ -67,13 +71,6 @@ extern "C" {
     // GetBodyFixturesCount
     void GetBodyFixturesCount(b2Body* body, int& count) {
         count = body->GetFixtureList() ? 1 : 0;
-    }
-
-    // GetBodyFixturesList
-    void GetBodyFixturesList(b2Body* body, b2Fixture**& fixturesList, int& count) {
-        GetBodyFixturesCount(body, count);
-        fixturesList = new b2Fixture*[count];
-        fixturesList[0] = body->GetFixtureList();
     }
 
     // SetBodyType
@@ -127,13 +124,15 @@ extern "C" {
     }
 
     // GetBodyContacts
-    void GetBodyContacts(b2Body* body, int*& contacts, int& count) {
-        GetBodyContactsCount(body, count);
-        contacts = new int[count];
-        int index = 0;
+    void GetBodyContacts(b2Body* body) {
+        int count =0;
+        GetBodyContactsCount(body,count);
+        int* contacts = GetIntBuffer(count+1);
+        contacts[0]=count;
+        int index = 1;
         b2ContactEdge* contactEdge = body->GetContactList();
         while (contactEdge) {
-            contacts[index++] = reinterpret_cast<int>(contactEdge->contact);
+            contacts[index++] = reinterpret_cast<int>(contactEdge->other->GetUserData());
             contactEdge = contactEdge->next;
         }
     }

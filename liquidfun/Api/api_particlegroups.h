@@ -3,6 +3,7 @@
 #include "Box2D/Dynamics/b2Fixture.h"
 #include <vector>
 #include <Box2D/Box2D.h>
+#include "api.h"
 
 // Particle Groups
 extern "C" {
@@ -99,7 +100,7 @@ extern "C" {
     int* AreParticlesInGroup(void* particleGroupPointer, int* indices) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         int count = particleGroup->GetParticleCount();
-        int* result = new int[count];
+        int* result = GetIntBuffer(count);
 
         const int* indicesArray = indices + 1;  // Skip the first element, which contains the count
         for (int i = 0; i < count; ++i) {
@@ -113,7 +114,7 @@ extern "C" {
     float* GetParticleGroupPosition(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2Vec2 position = particleGroup->GetCenter();
-        float* result = new float[2];
+        float* result = GetFloatBuffer(2);
         result[0] = position.x;
         result[1] = position.y;
         return result;
@@ -123,7 +124,7 @@ extern "C" {
     float* GetParticleGroupCentroid(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2Vec2 centroid = particleGroup->GetCenter();
-        float* result = new float[2];
+        float* result = GetFloatBuffer(2);
         result[0] = centroid.x;
         result[1] = centroid.y;
         return result;
@@ -133,7 +134,7 @@ extern "C" {
     float* GetParticleGroupVelocity(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2Vec2 velocity = particleGroup->GetLinearVelocity();
-        float* result = new float[2];
+        float* result = GetFloatBuffer(2);
         result[0] = velocity.x;
         result[1] = velocity.y;
         return result;

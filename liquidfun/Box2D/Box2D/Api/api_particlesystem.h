@@ -195,7 +195,29 @@ extern "C"
     // GetParticlesInShape
     int *GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation)
     {
-        return particleSystem->GetParticlesInShape(world, particleSystem, shape, shapeX, shapeY, shapeRotation);
+        b2Transform transform;
+        transform.SetIdentity();
+        transform.Set(b2Vec2(shapeX, shapeY),shapeRotation);
+
+        b2AABB aabb;
+        shape->ComputeAABB(&aabb, transform, 0);
+        auto enumerator = particleSystem->GetInsideBoundsEnumerator(aabb);
+        
+        std::vector<int32> particleIndices;
+        int32 particleIndex = 0;
+        while ((particleIndex = enumerator.GetNext()) != b2_invalidParticleIndex)
+        {
+            particleIndices.push_back(particleIndex);
+        }
+        int count = particleIndices.size();
+        int* result = GetIntBuffer(count+1);
+        result[0] = count;
+        for (int i = 0; i < count; ++i)
+        {
+            result[i + 1] = particleIndices[i];
+        }
+
+        return result;
     }
 
     // SetDestructionByAge
@@ -303,5 +325,4 @@ extern "C"
 
         return largestGroup;
     }
-
 }

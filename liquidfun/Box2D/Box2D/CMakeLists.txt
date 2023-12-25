@@ -1,3 +1,20 @@
+set(BOX2D_API_SRCS
+	Collision/b2BroadPhase.cpp
+	Collision/b2CollideCircle.cpp
+	Collision/b2CollideEdge.cpp
+	Collision/b2CollidePolygon.cpp
+	Collision/b2Collision.cpp
+	Collision/b2Distance.cpp
+	Collision/b2DynamicTree.cpp
+	Collision/b2TimeOfImpact.cpp
+)
+set(BOX2D_API_HDRS
+	Collision/b2BroadPhase.h
+	Collision/b2Collision.h
+	Collision/b2Distance.h
+	Collision/b2DynamicTree.h
+	Collision/b2TimeOfImpact.h
+)
 set(BOX2D_Collision_SRCS
 	Collision/b2BroadPhase.cpp
 	Collision/b2CollideCircle.cpp

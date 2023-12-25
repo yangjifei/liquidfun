@@ -748,6 +748,50 @@ private:
 
 	int *GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation);
 
+	
+	/// Used for detecting particle contacts
+	struct Proxy
+	{
+		int32 index;
+		uint32 tag;
+		friend inline bool operator<(const Proxy &a, const Proxy &b)
+		{
+			return a.tag < b.tag;
+		}
+		friend inline bool operator<(uint32 a, const Proxy &b)
+		{
+			return a < b.tag;
+		}
+		friend inline bool operator<(const Proxy &a, uint32 b)
+		{
+			return a.tag < b;
+		}
+	};
+
+	/// InsideBoundsEnumerator enumerates all particles inside the given bounds.
+	class InsideBoundsEnumerator
+	{
+	public:
+		/// Construct an enumerator with bounds of tags and a range of proxies.
+		InsideBoundsEnumerator(
+			uint32 lower, uint32 upper,
+			const Proxy* first, const Proxy* last);
+
+		/// Get index of the next particle. Returns b2_invalidParticleIndex if
+		/// there are no more particles.
+		int32 GetNext();
+	private:
+		/// The lower and upper bound of x component in the tag.
+		uint32 m_xLower, m_xUpper;
+		/// The lower and upper bound of y component in the tag.
+		uint32 m_yLower, m_yUpper;
+		/// The range of proxies.
+		const Proxy* m_first;
+		const Proxy* m_last;
+	};
+
+	InsideBoundsEnumerator GetInsideBoundsEnumerator(const b2AABB& aabb) const;
+
 private:
 	friend class b2World;
 	friend class b2ParticleGroup;
@@ -768,25 +812,6 @@ private:
 		}
 		T* data;
 		int32 userSuppliedCapacity;
-	};
-
-	/// Used for detecting particle contacts
-	struct Proxy
-	{
-		int32 index;
-		uint32 tag;
-		friend inline bool operator<(const Proxy &a, const Proxy &b)
-		{
-			return a.tag < b.tag;
-		}
-		friend inline bool operator<(uint32 a, const Proxy &b)
-		{
-			return a < b.tag;
-		}
-		friend inline bool operator<(const Proxy &a, uint32 b)
-		{
-			return a.tag < b;
-		}
 	};
 
 	/// Class for filtering pairs or triads.
@@ -816,28 +841,6 @@ private:
 			B2_NOT_USED(c);
 			return true;
 		}
-	};
-
-	/// InsideBoundsEnumerator enumerates all particles inside the given bounds.
-	class InsideBoundsEnumerator
-	{
-	public:
-		/// Construct an enumerator with bounds of tags and a range of proxies.
-		InsideBoundsEnumerator(
-			uint32 lower, uint32 upper,
-			const Proxy* first, const Proxy* last);
-
-		/// Get index of the next particle. Returns b2_invalidParticleIndex if
-		/// there are no more particles.
-		int32 GetNext();
-	private:
-		/// The lower and upper bound of x component in the tag.
-		uint32 m_xLower, m_xUpper;
-		/// The lower and upper bound of y component in the tag.
-		uint32 m_yLower, m_yUpper;
-		/// The range of proxies.
-		const Proxy* m_first;
-		const Proxy* m_last;
 	};
 
 	/// Node of linked lists of connected particles
@@ -935,8 +938,6 @@ private:
 		const b2ParticleGroup* group, const ParticleListNode* nodeBuffer);
 
 	void ComputeDepth();
-
-	InsideBoundsEnumerator GetInsideBoundsEnumerator(const b2AABB& aabb) const;
 
 	void UpdateAllParticleFlags();
 	void UpdateAllGroupFlags();

@@ -4712,32 +4712,4 @@ b2ParticleSystem::b2ExceptionType b2ParticleSystem::IsBufCopyValid(
 
 	return b2_noExceptions;
 }
-
 #endif // LIQUIDFUN_EXTERNAL_LANGUAGE_API
-
-int *b2ParticleSystem::GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation)
-{
-    b2Transform transform;
-    transform.SetIdentity();
-    transform.Set(b2Vec2(shapeX, shapeY),shapeRotation);
-
-    b2AABB aabb;
-    shape->ComputeAABB(&aabb, transform, 0);
-    auto enumerator = particleSystem->GetInsideBoundsEnumerator(aabb);
-	
-	std::vector<int32> particleIndices;
-    int32 particleIndex = 0;
-	while ((particleIndex = enumerator.GetNext()) != b2_invalidParticleIndex)
-    {
-        particleIndices.push_back(particleIndex);
-    }
-	int count = particleIndices.size();
-    int result[count+1];
-    result[0] = count;
-    for (int i = 0; i < count; ++i)
-    {
-        result[i + 1] = particleIndices[i];
-    }
-
-    return result;
-}

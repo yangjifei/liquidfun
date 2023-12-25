@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(Box2D)
 
 if(UNIX)
-  set(BOX2D_INSTALL_BY_DEFAULT ON)
+  set(BOX2D_INSTALL_BY_DEFAULT OFF)
 else(UNIX)
   set(BOX2D_INSTALL_BY_DEFAULT OFF)
 endif(UNIX)
@@ -20,10 +20,10 @@ set(BOX2D_INSTALL_BY_DEFAULT OFF)
 
 option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" ${BOX2D_INSTALL_BY_DEFAULT})
 option(BOX2D_INSTALL_DOC "Install Box2D documentation" OFF)
-option(BOX2D_BUILD_SHARED "Build Box2D shared libraries" OFF)
+option(BOX2D_BUILD_SHARED "Build Box2D shared libraries" ON)
 option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
-option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" ON)
-option(BOX2D_BUILD_UNITTESTS "Build Box2D Unit Tests" ON)
+option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
+option(BOX2D_BUILD_UNITTESTS "Build Box2D Unit Tests" OFF)
 # NOTE: Code coverage only works on Linux & OSX.
 option(BOX2D_CODE_COVERAGE "Enable the code coverage build option." OFF)
 

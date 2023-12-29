@@ -405,7 +405,7 @@ b2ParticleSystem::b2ParticleSystem(const b2ParticleSystemDef* def,
 	m_hasForce = false;
 	m_iterationIndex = 0;
 
-	index = def->index;
+	systemIndex = def->index;
 	SetStrictContactCheck(def->strictContactCheck);
 	SetDensity(def->density);
 	SetGravityScale(def->gravityScale);

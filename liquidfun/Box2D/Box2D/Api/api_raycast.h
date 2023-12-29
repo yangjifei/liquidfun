@@ -1,8 +1,8 @@
 #include "Box2D/Box2D.h"
 #include "Box2D/Particle/b2ParticleSystem.h"
 #include "Box2D/Dynamics/b2Fixture.h"
-#include "Box2D/Testbed/Tests/RayCast.h"
 #include "api.h"
+#include "../Unity/IUnityInterface.h"
 
 // 光线投射结果的结构体
 struct RaycastResult
@@ -61,7 +61,7 @@ public:
 };
 
 // C++函数，用于执行液体物理引擎中的光线投射
-extern "C" void *RaycastWorld(b2World *world, float x1, float y1, float x2, float y2, int mode, bool shouldQueryParticleSystem)
+extern "C" UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API RaycastWorld(b2World *world, float x1, float y1, float x2, float y2, int mode, bool shouldQueryParticleSystem)
 {
     // 设置光线投射的参数
     b2Vec2 p1(x1, y1);

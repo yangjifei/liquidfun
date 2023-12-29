@@ -281,7 +281,7 @@ struct b2ParticleSystemDef
 class b2ParticleSystem
 {
 public:
-	int32 index;
+	int32 systemIndex;
 	/// Create a particle whose properties have been defined.
 	/// No reference to the definition is retained.
 	/// A simulation step must occur before it's possible to interact with a
@@ -735,20 +735,6 @@ public:
 	int CopyWeightBuffer(int startIndex, int numParticles, void* outBuf,
 						 int size) const;
 
-private:
-	/// Helper function for buffer copies.
-	int CopyBuffer(int startIndex, int numParticles, void* inBufWithOffset,
-				   void* outBuf, int outBufSize, int copySize) const;
-
-	/// Check if buffer copy is valid for the Get*Buffer functions that have
-	/// a user-supplied output buffer.
-	b2ExceptionType IsBufCopyValid(int startIndex, int numParticles,
-								   int copySize, int bufSize) const;
-#endif // LIQUIDFUN_EXTERNAL_LANGUAGE_API
-
-	int *GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation);
-
-	
 	/// Used for detecting particle contacts
 	struct Proxy
 	{
@@ -792,6 +778,20 @@ private:
 
 	InsideBoundsEnumerator GetInsideBoundsEnumerator(const b2AABB& aabb) const;
 
+private:
+	/// Helper function for buffer copies.
+	int CopyBuffer(int startIndex, int numParticles, void* inBufWithOffset,
+				   void* outBuf, int outBufSize, int copySize) const;
+
+	/// Check if buffer copy is valid for the Get*Buffer functions that have
+	/// a user-supplied output buffer.
+	b2ExceptionType IsBufCopyValid(int startIndex, int numParticles,
+								   int copySize, int bufSize) const;
+#endif // LIQUIDFUN_EXTERNAL_LANGUAGE_API
+
+	int *GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation);
+
+	
 private:
 	friend class b2World;
 	friend class b2ParticleGroup;

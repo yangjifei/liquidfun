@@ -1,15 +1,15 @@
 #include "Box2D/Box2D.h"
 #include "Box2D/Particle/b2ParticleSystem.h"
 #include "Box2D/Dynamics/b2Fixture.h"
-#include "Box2D/Testbed/Tests/RayCast.h"
 #include <vector>
 #include "api.h"
+#include "../Unity/IUnityInterface.h"
 #define IntPtr void *
 
 extern "C"
 {
     // GetBoxShapeDef
-    b2PolygonShape *GetBoxShapeDef(float width, float height, float centreX, float centreY, float angle)
+    UNITY_INTERFACE_EXPORT b2PolygonShape* UNITY_INTERFACE_API GetBoxShapeDef(float width, float height, float centreX, float centreY, float angle)
     {
         b2PolygonShape *shape = new b2PolygonShape();
         b2Vec2 center(centreX, centreY);
@@ -18,7 +18,7 @@ extern "C"
     }
 
     // GetCircleShapeDef
-    b2CircleShape *GetCircleShapeDef(float radius, float centreX, float centreY)
+    UNITY_INTERFACE_EXPORT b2CircleShape* UNITY_INTERFACE_API GetCircleShapeDef(float radius, float centreX, float centreY)
     {
         b2CircleShape *shape = new b2CircleShape();
         shape->m_p.Set(centreX, centreY);
@@ -27,7 +27,7 @@ extern "C"
     }
 
     // GetPolygonShapeDef
-    b2PolygonShape *GetPolygonShapeDef(float *vertexArray)
+    UNITY_INTERFACE_EXPORT b2PolygonShape* UNITY_INTERFACE_API GetPolygonShapeDef(float *vertexArray)
     {
         int vertexCount = static_cast<int>(vertexArray[0]);
         b2Vec2 *vertices = new b2Vec2[vertexCount];
@@ -44,7 +44,7 @@ extern "C"
     }
 
     // GetChainShapeDef
-    b2ChainShape *GetChainShapeDef(float *vertexArray, bool loop)
+    UNITY_INTERFACE_EXPORT b2ChainShape* UNITY_INTERFACE_API GetChainShapeDef(float *vertexArray, bool loop)
     {
         int vertexCount = static_cast<int>(vertexArray[0]);
         b2Vec2 *vertices = new b2Vec2[vertexCount];
@@ -68,7 +68,7 @@ extern "C"
     }
 
     // GetEdgeShapeDef
-    b2EdgeShape *GetEdgeShapeDef(float x1, float y1, float x2, float y2)
+    UNITY_INTERFACE_EXPORT b2EdgeShape* UNITY_INTERFACE_API GetEdgeShapeDef(float x1, float y1, float x2, float y2)
     {
         b2EdgeShape *shape = new b2EdgeShape();
         shape->Set(b2Vec2(x1, y1), b2Vec2(x2, y2));
@@ -76,7 +76,7 @@ extern "C"
     }
 
     // GetEllipseShapeDef
-    b2PolygonShape *GetEllipseShapeDef(float outerRadius, float divisions)
+    UNITY_INTERFACE_EXPORT b2PolygonShape* UNITY_INTERFACE_API GetEllipseShapeDef(float outerRadius, float divisions)
     {
         // Create an ellipse shape using a polygon shape
         b2PolygonShape *shape = new b2PolygonShape();
@@ -98,7 +98,7 @@ extern "C"
     }
 
     // GetPolyShapeCentroid
-    float *GetPolyShapeCentroid(IntPtr shapePointer)
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetPolyShapeCentroid(IntPtr shapePointer)
     {
         b2Shape *shape = reinterpret_cast<b2Shape *>(shapePointer);
 

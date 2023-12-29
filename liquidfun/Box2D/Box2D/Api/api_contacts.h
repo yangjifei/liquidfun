@@ -106,7 +106,7 @@ public:
 							  b2ParticleBodyContact* particleBodyContact) override
 	{
 		partFixContacts.push_back(
-		    ContactPartFix{	particleSystem->index,
+		    ContactPartFix{	particleSystem->systemIndex,
 							particleBodyContact->index,
 		                    reinterpret_cast<int>(particleBodyContact->body->GetUserData()),
 		                    reinterpret_cast<int>(particleBodyContact->fixture->GetUserData()),
@@ -130,7 +130,7 @@ public:
 							  b2ParticleContact* particleContact) override
 	{
 		partPartContacts.push_back(
-		    ContactPartPart{particleSystem->index,
+		    ContactPartPart{particleSystem->systemIndex,
 							particleContact->GetIndexA(),
 							particleContact->GetIndexB()});
 	}
@@ -178,14 +178,14 @@ public:
 extern "C" {
 
 // 创建并设置碰撞监听器
-void* SetContactListener(b2World* world) {
+UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API SetContactListener(b2World* world) {
     MyContactListener* listener = new MyContactListener();
     world->SetContactListener(listener);
     return listener;
 }
 
 // 更新碰撞监听器并返回碰撞信息
-void* UpdateContactListener(MyContactListener* listener) {
+UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API UpdateContactListener(MyContactListener* listener) {
     float* buffer = listener->UpdateContactBuffer();
     return buffer;
 }

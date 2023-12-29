@@ -1,19 +1,33 @@
-set(BOX2D_API_SRCS
-	Collision/b2BroadPhase.cpp
-	Collision/b2CollideCircle.cpp
-	Collision/b2CollideEdge.cpp
-	Collision/b2CollidePolygon.cpp
-	Collision/b2Collision.cpp
-	Collision/b2Distance.cpp
-	Collision/b2DynamicTree.cpp
-	Collision/b2TimeOfImpact.cpp
+set(BOX2D_Api_SRCS
+	API/api.cpp
 )
-set(BOX2D_API_HDRS
-	Collision/b2BroadPhase.h
-	Collision/b2Collision.h
-	Collision/b2Distance.h
-	Collision/b2DynamicTree.h
-	Collision/b2TimeOfImpact.h
+set(BOX2D_Api_HDRS
+	Api/api_body.h
+	Api/api_contacts.h
+	Api/api_fixture.h
+	Api/api_joint.h
+	Api/api_particlegroups.h
+	Api/api_particles.h
+	Api/api_particlesystem.h
+	Api/api_raycast.h
+	Api/api_shape.h
+	Api/api_utility.h
+	Api/api_world.h
+	Api/api.h
+)
+set(BOX2D_Unity_HDRS
+	Unity/IUnityEventQueue.h
+	Unity/IUnityGraphics.h
+	Unity/IUnityGraphicsD3D11.h
+	Unity/IUnityGraphicsD3D12.h
+	Unity/IUnityGraphicsMetal.h
+	Unity/IUnityGraphicsVulkan.h
+	Unity/IUnityInterface.h
+	Unity/IUnityProfiler.h
+	Unity/IUnityProfilerCallbacks.h
+	Unity/IUnityRenderingExtensions.h
+	Unity/IUnityShaderCompilerAccess.h
+	Unity/UnityAndroidAsset.h
 )
 set(BOX2D_Collision_SRCS
 	Collision/b2BroadPhase.cpp
@@ -165,6 +179,7 @@ include_directories( ../ )
 
 if(BOX2D_BUILD_SHARED)
 	add_library(Box2D_shared SHARED
+		${BOX2D_Unity_HDRS}
 		${BOX2D_General_HDRS}
 		${BOX2D_Joints_SRCS}
 		${BOX2D_Joints_HDRS}
@@ -182,9 +197,11 @@ if(BOX2D_BUILD_SHARED)
 		${BOX2D_Particle_HDRS}
 		${BOX2D_Rope_SRCS}
 		${BOX2D_Rope_HDRS}
+		${BOX2D_Api_SRCS}
+		${BOX2D_Api_HDRS}
 	)
 	set_target_properties(Box2D_shared PROPERTIES
-		OUTPUT_NAME "liquidfun"
+		OUTPUT_NAME "liquidfundll"
 		CLEAN_DIRECT_OUTPUT 1
 		VERSION ${BOX2D_VERSION}
 	)
@@ -196,6 +213,7 @@ endif()
 
 if(BOX2D_BUILD_STATIC)
 	add_library(Box2D STATIC
+		${BOX2D_Unity_HDRS}
 		${BOX2D_General_HDRS}
 		${BOX2D_Joints_SRCS}
 		${BOX2D_Joints_HDRS}
@@ -213,9 +231,11 @@ if(BOX2D_BUILD_STATIC)
 		${BOX2D_Particle_HDRS}
 		${BOX2D_Rope_SRCS}
 		${BOX2D_Rope_HDRS}
+		${BOX2D_Api_SRCS}
+		${BOX2D_Api_HDRS}
 	)
 	set_target_properties(Box2D PROPERTIES
-		OUTPUT_NAME "liquidfun"
+		OUTPUT_NAME "liquidfundll"
 		CLEAN_DIRECT_OUTPUT 1
 		VERSION ${BOX2D_VERSION}
 	)
@@ -235,6 +255,7 @@ source_group(Dynamics\\Joints FILES ${BOX2D_Joints_SRCS} ${BOX2D_Joints_HDRS})
 source_group(Include FILES ${BOX2D_General_HDRS})
 source_group(Particle FILES ${BOX2D_Particle_SRCS} ${BOX2D_Particle_HDRS})
 source_group(Rope FILES ${BOX2D_Rope_SRCS} ${BOX2D_Rope_HDRS})
+source_group(Api FILES ${BOX2D_Api_SRCS} ${BOX2D_Api_HDRS})
 
 if(BOX2D_INSTALL)
 	# install headers
@@ -246,7 +267,9 @@ if(BOX2D_INSTALL)
 	install(FILES ${BOX2D_Contacts_HDRS} DESTINATION include/Box2D/Dynamics/Contacts)
 	install(FILES ${BOX2D_Joints_HDRS} DESTINATION include/Box2D/Dynamics/Joints)
 	install(FILES ${BOX2D_Particle_HDRS} DESTINATION include/Box2D/Particle)
+	install(FILES ${BOX2D_Api_HDRS} DESTINATION include/Box2D/Api)
 	install(FILES ${BOX2D_Rope_HDRS} DESTINATION include/Box2D/Rope)
+	install(FILES ${BOX2D_Unity_HDRS} DESTINATION include/Box2D/Unity)
 
 	# install libraries
 	if(BOX2D_BUILD_SHARED)

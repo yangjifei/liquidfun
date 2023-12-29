@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-
-project(Box2D)
+project(liquidfundll)
 
 if(UNIX)
   set(BOX2D_INSTALL_BY_DEFAULT OFF)
@@ -71,7 +70,7 @@ include("flags.cmake")
 
 set(C_FLAGS_WARNINGS "")
 if(MSVC)
-  set(C_FLAGS_WARNINGS "/W4 /WX")
+  set(C_FLAGS_WARNINGS "/W4 /WX-")
 elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR
        CMAKE_COMPILER_IS_CLANGXX)
   # Set the maximum warning level for gcc.

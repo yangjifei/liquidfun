@@ -7,7 +7,7 @@
 extern "C" {
 
     // CreateBody
-    b2Body* CreateBody(b2World* world, int bodyType, float xPosition, float yPosition,
+    UNITY_INTERFACE_EXPORT b2Body* UNITY_INTERFACE_API CreateBody(b2World* world, int bodyType, float xPosition, float yPosition,
                         float angleInRadians, float linearDamping, float angularDamping,
                         bool allowSleep, bool fixedRotation, bool bullet, float gravityScale, int userData) {
         b2BodyDef bodyDef;
@@ -26,18 +26,18 @@ extern "C" {
     }
 
     // ApplyForceToCentreOfBody
-    void ApplyForceToCentreOfBody(b2Body* body, float impulseX, float impulseY) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ApplyForceToCentreOfBody(b2Body* body, float impulseX, float impulseY) {
         body->ApplyForceToCenter(b2Vec2(impulseX, impulseY), true);
     }
 
     // GetBodyInfo
-    b2Vec3 GetBodyInfo(b2Body* body) {
+    b2Vec3 UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyInfo(b2Body* body) {
         b2Transform transform = body->GetTransform();
         return b2Vec3(transform.p.x, transform.p.y, transform.q.GetAngle());
     }
 
     // GetAllBodyInfo
-    void* GetAllBodyInfo(b2Body** bodyArray, int numBodies) {
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API GetAllBodyInfo(b2Body** bodyArray, int numBodies) {
         auto result = GetFloatBuffer(numBodies * 3);
         for (int i = 0; i < numBodies; ++i) {
             b2Transform transform = bodyArray[i]->GetTransform();
@@ -49,72 +49,72 @@ extern "C" {
     }
 
     // SetBodyAwake
-    void SetBodyAwake(b2Body* body, bool isAwake) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyAwake(b2Body* body, bool isAwake) {
         body->SetAwake(isAwake);
     }
 
     // GetBodyAwake
-    bool GetBodyAwake(b2Body* body) {
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyAwake(b2Body* body) {
         return body->IsAwake();
     }
 
     // SetBodyActive
-    void SetBodyActive(b2Body* body, bool isActive) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyActive(b2Body* body, bool isActive) {
         body->SetActive(isActive);
     }
 
     // GetBodyActive
-    bool GetBodyActive(b2Body* body) {
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyActive(b2Body* body) {
         return body->IsActive();
     }
 
     // GetBodyFixturesCount
-    void GetBodyFixturesCount(b2Body* body, int& count) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyFixturesCount(b2Body* body, int& count) {
         count = body->GetFixtureList() ? 1 : 0;
     }
 
     // SetBodyType
-    void SetBodyType(b2Body* body, int type) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyType(b2Body* body, int type) {
         body->SetType(static_cast<b2BodyType>(type));
     }
 
     // SetBodyPosition
-    void SetBodyPosition(b2Body* body, float x, float y) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyPosition(b2Body* body, float x, float y) {
         body->SetTransform(b2Vec2(x, y), body->GetAngle());
     }
 
     // SetBodyRotation
-    void SetBodyRotation(b2Body* body, float angle) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyRotation(b2Body* body, float angle) {
         body->SetTransform(body->GetPosition(), angle);
     }
 
     // SetBodyLinearVelocity
-    void SetBodyLinearVelocity(b2Body* body, float x, float y) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyLinearVelocity(b2Body* body, float x, float y) {
         body->SetLinearVelocity(b2Vec2(x, y));
     }
 
     // GetBodyLinearVelocity
-    b2Vec2 GetBodyLinearVelocity(b2Body* body) {
+    b2Vec2 UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyLinearVelocity(b2Body* body) {
         return body->GetLinearVelocity();
     }
 
     // SetBodyAngularVelocity
-    void SetBodyAngularVelocity(b2Body* body, float omega) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyAngularVelocity(b2Body* body, float omega) {
         body->SetAngularVelocity(omega);
     }
 
     // GetBodyAngularVelocity
-    float GetBodyAngularVelocity(b2Body* body) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyAngularVelocity(b2Body* body) {
         return body->GetAngularVelocity();
     }
 
     // GetBodyUserData
-    int GetBodyUserData(b2Body* body) {
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyUserData(b2Body* body) {
         return reinterpret_cast<int>(body->GetUserData());
     }
 
     // GetBodyContactsCount
-    void GetBodyContactsCount(b2Body* body, int& count) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyContactsCount(b2Body* body, int& count) {
         count = 0;
         b2ContactEdge* contactEdge = body->GetContactList();
         while (contactEdge) {
@@ -124,7 +124,7 @@ extern "C" {
     }
 
     // GetBodyContacts
-    void GetBodyContacts(b2Body* body) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyContacts(b2Body* body) {
         int count =0;
         GetBodyContactsCount(body,count);
         int* contacts = GetIntBuffer(count+1);
@@ -138,52 +138,52 @@ extern "C" {
     }
 
     // SetBodyLinearDamping
-    void SetBodyLinearDamping(b2Body* body, float linearDamping) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyLinearDamping(b2Body* body, float linearDamping) {
         body->SetLinearDamping(linearDamping);
     }
 
     // GetBodyLinearDamping
-    float GetBodyLinearDamping(b2Body* body) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyLinearDamping(b2Body* body) {
         return body->GetLinearDamping();
     }
 
     // SetBodyAngularDamping
-    void SetBodyAngularDamping(b2Body* body, float angularDamping) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyAngularDamping(b2Body* body, float angularDamping) {
         body->SetAngularDamping(angularDamping);
     }
 
     // GetBodyAngularDamping
-    float GetBodyAngularDamping(b2Body* body) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyAngularDamping(b2Body* body) {
         return body->GetAngularDamping();
     }
 
     // SetBodyGravityScale
-    void SetBodyGravityScale(b2Body* body, float gravityScale) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyGravityScale(b2Body* body, float gravityScale) {
         body->SetGravityScale(gravityScale);
     }
 
     // GetBodyGravityScale
-    float GetBodyGravityScale(b2Body* body) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyGravityScale(b2Body* body) {
         return body->GetGravityScale();
     }
 
     // SetBodyIsBullet
-    void SetBodyIsBullet(b2Body* body, bool isBullet) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyIsBullet(b2Body* body, bool isBullet) {
         body->SetBullet(isBullet);
     }
 
     // GetBodyIsBullet
-    bool GetBodyIsBullet(b2Body* body) {
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyIsBullet(b2Body* body) {
         return body->IsBullet();
     }
 
     // SetBodyFixedRotation
-    void SetBodyFixedRotation(b2Body* body, bool fixedRotation) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyFixedRotation(b2Body* body, bool fixedRotation) {
         body->SetFixedRotation(fixedRotation);
     }
 
     // GetBodyFixedRotation
-    bool GetBodyFixedRotation(b2Body* body) {
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyFixedRotation(b2Body* body) {
         return body->IsFixedRotation();
     }
 }

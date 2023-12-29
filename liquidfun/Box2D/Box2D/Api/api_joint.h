@@ -5,7 +5,7 @@
 
 // Gear Joint
 extern "C" {
-    void* CreateGearJoint(void* world, void* joint1, void* joint2, float ratio, bool collideConnected) {
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateGearJoint(void* world, void* joint1, void* joint2, float ratio, bool collideConnected) {
         b2World* b2WorldPtr = static_cast<b2World*>(world);
         b2Joint* b2Joint1Ptr = static_cast<b2Joint*>(joint1);
         b2Joint* b2Joint2Ptr = static_cast<b2Joint*>(joint2);
@@ -22,7 +22,7 @@ extern "C" {
         return static_cast<void*>(gearJoint);
     }
 
-    float GetGearJointRatio(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetGearJointRatio(void* joint) {
         b2GearJoint* gearJoint = static_cast<b2GearJoint*>(joint);
         return gearJoint->GetRatio();
     }
@@ -30,7 +30,7 @@ extern "C" {
 
 // Wheel Joint
 extern "C" {
-    void* CreateWheelJoint(void* world, void* bodyA, void* bodyB,
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateWheelJoint(void* world, void* bodyA, void* bodyB,
                             float anchorAX, float anchorAY,
                             float anchorBX, float anchorBY,
                             float axisX, float axisY, bool collideConnected) {
@@ -47,57 +47,57 @@ extern "C" {
         return static_cast<void*>(wheelJoint);
     }
 
-    void SetWheelJointMotorSpeed(void* joint, float speed) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetWheelJointMotorSpeed(void* joint, float speed) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         wheelJoint->SetMotorSpeed(speed);
     }
 
-    void SetWheelJointMaxMotorTorque(void* joint, float torque) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetWheelJointMaxMotorTorque(void* joint, float torque) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         wheelJoint->SetMaxMotorTorque(torque);
     }
 
-    void EnableWheelJointMotor(void* joint, bool isEnabled) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API EnableWheelJointMotor(void* joint, bool isEnabled) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         wheelJoint->EnableMotor(isEnabled);
     }
 
-    bool IsWheelJointMotorEnabled(void* joint) {
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API IsWheelJointMotorEnabled(void* joint) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         return wheelJoint->IsMotorEnabled();
     }
 
-    float GetWheelJointMotorSpeed(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetWheelJointMotorSpeed(void* joint) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         return wheelJoint->GetMotorSpeed();
     }
 
-    float GetWheelJointMotorTorque(void* joint, float inverseDeltaTime) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetWheelJointMotorTorque(void* joint, float inverseDeltaTime) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         return wheelJoint->GetMotorTorque(inverseDeltaTime);
     }
 
-    float GetWheelJointMaxMotorTorque(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetWheelJointMaxMotorTorque(void* joint) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         return wheelJoint->GetMaxMotorTorque();
     }
 
-    void SetWheelJointSpringDampingRatio(void* joint, float ratio) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetWheelJointSpringDampingRatio(void* joint, float ratio) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         wheelJoint->SetSpringDampingRatio(ratio);
     }
 
-    float GetWheelJointSpringDampingRatio(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetWheelJointSpringDampingRatio(void* joint) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         return wheelJoint->GetSpringDampingRatio();
     }
 
-    void SetWheelJointSpringFrequency(void* joint, float frequency) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetWheelJointSpringFrequency(void* joint, float frequency) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         wheelJoint->SetSpringFrequencyHz(frequency);
     }
 
-    float GetWheelJointSpringFrequency(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetWheelJointSpringFrequency(void* joint) {
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(joint);
         return wheelJoint->GetSpringFrequencyHz();
     }
@@ -105,7 +105,7 @@ extern "C" {
 
 // Weld Joint
 extern "C" {
-    void* CreateWeldJoint(void* world, void* bodyA, void* bodyB,
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateWeldJoint(void* world, void* bodyA, void* bodyB,
                           float anchorAX, float anchorAY,
                           float anchorBX, float anchorBY, bool collideConnected) {
         b2World* b2WorldPtr = static_cast<b2World*>(world);
@@ -121,22 +121,22 @@ extern "C" {
         return static_cast<void*>(weldJoint);
     }
 
-    void SetWeldJointDampingRatio(void* joint, float ratio) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetWeldJointDampingRatio(void* joint, float ratio) {
         b2WeldJoint* weldJoint = static_cast<b2WeldJoint*>(joint);
         weldJoint->SetDampingRatio(ratio);
     }
 
-    float GetWeldJointDampingRatio(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetWeldJointDampingRatio(void* joint) {
         b2WeldJoint* weldJoint = static_cast<b2WeldJoint*>(joint);
         return weldJoint->GetDampingRatio();
     }
 
-    void SetWeldJointFrequency(void* joint, float frequency) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetWeldJointFrequency(void* joint, float frequency) {
         b2WeldJoint* weldJoint = static_cast<b2WeldJoint*>(joint);
         weldJoint->SetFrequency(frequency);
     }
 
-    float GetWeldJointFrequency(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetWeldJointFrequency(void* joint) {
         b2WeldJoint* weldJoint = static_cast<b2WeldJoint*>(joint);
         return weldJoint->GetFrequency();
     }
@@ -144,7 +144,7 @@ extern "C" {
 
 // Friction Joint
 extern "C" {
-    void* CreateFrictionJoint(void* world, void* bodyA, void* bodyB,
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateFrictionJoint(void* world, void* bodyA, void* bodyB,
                               float anchorAX, float anchorAY,
                               float anchorBX, float anchorBY, bool collideConnected) {
         b2World* b2WorldPtr = static_cast<b2World*>(world);
@@ -160,22 +160,22 @@ extern "C" {
         return static_cast<void*>(frictionJoint);
     }
 
-    float GetFrictionJointMaxTorque(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFrictionJointMaxTorque(void* joint) {
         b2FrictionJoint* frictionJoint = static_cast<b2FrictionJoint*>(joint);
         return frictionJoint->GetMaxTorque();
     }
 
-    void SetFrictionJointMaxTorque(void* joint, float torque) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetFrictionJointMaxTorque(void* joint, float torque) {
         b2FrictionJoint* frictionJoint = static_cast<b2FrictionJoint*>(joint);
         frictionJoint->SetMaxTorque(torque);
     }
 
-    float GetFrictionJointMaxForce(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFrictionJointMaxForce(void* joint) {
         b2FrictionJoint* frictionJoint = static_cast<b2FrictionJoint*>(joint);
         return frictionJoint->GetMaxForce();
     }
 
-    void SetFrictionJointMaxForce(void* joint, float force) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetFrictionJointMaxForce(void* joint, float force) {
         b2FrictionJoint* frictionJoint = static_cast<b2FrictionJoint*>(joint);
         frictionJoint->SetMaxForce(force);
     }
@@ -183,7 +183,7 @@ extern "C" {
 
 // Rope Joint
 extern "C" {
-    void* CreateRopeJoint(void* world, void* bodyA, void* bodyB,
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateRopeJoint(void* world, void* bodyA, void* bodyB,
                           float anchorAX, float anchorAY,
                           float anchorBX, float anchorBY, float maxLength, bool collideConnect) {
         b2World* b2WorldPtr = static_cast<b2World*>(world);
@@ -202,12 +202,12 @@ extern "C" {
         return static_cast<void*>(ropeJoint);
     }
 
-    float GetRopeJointMaxLength(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetRopeJointMaxLength(void* joint) {
         b2RopeJoint* ropeJoint = static_cast<b2RopeJoint*>(joint);
         return ropeJoint->GetMaxLength();
     }
 
-    void SetRopeJointMaxLength(void* joint, float length) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetRopeJointMaxLength(void* joint, float length) {
         b2RopeJoint* ropeJoint = static_cast<b2RopeJoint*>(joint);
         ropeJoint->SetMaxLength(length);
     }
@@ -216,7 +216,7 @@ extern "C" {
 
 // Mouse Joint
 extern "C" {
-    void* CreateMouseJoint(void* world, void* bodyA, void* bodyB,
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateMouseJoint(void* world, void* bodyA, void* bodyB,
                            float targetX, float targetY, bool collideConnected) {
         b2World* b2WorldPtr = static_cast<b2World*>(world);
         b2Body* b2BodyAPtr = static_cast<b2Body*>(bodyA);
@@ -232,32 +232,32 @@ extern "C" {
         return static_cast<void*>(mouseJoint);
     }
 
-    void SetMouseJointDampingRatio(void* joint, float ratio) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetMouseJointDampingRatio(void* joint, float ratio) {
         b2MouseJoint* mouseJoint = static_cast<b2MouseJoint*>(joint);
         mouseJoint->SetDampingRatio(ratio);
     }
 
-    float GetMouseJointDampingRatio(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetMouseJointDampingRatio(void* joint) {
         b2MouseJoint* mouseJoint = static_cast<b2MouseJoint*>(joint);
         return mouseJoint->GetDampingRatio();
     }
 
-    void SetMouseJointFrequency(void* joint, float frequency) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetMouseJointFrequency(void* joint, float frequency) {
         b2MouseJoint* mouseJoint = static_cast<b2MouseJoint*>(joint);
         mouseJoint->SetFrequency(frequency);
     }
 
-    float GetMouseJointFrequency(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetMouseJointFrequency(void* joint) {
         b2MouseJoint* mouseJoint = static_cast<b2MouseJoint*>(joint);
         return mouseJoint->GetFrequency();
     }
 
-    void SetMouseJointMaxForce(void* joint, float maxForce) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetMouseJointMaxForce(void* joint, float maxForce) {
         b2MouseJoint* mouseJoint = static_cast<b2MouseJoint*>(joint);
         mouseJoint->SetMaxForce(maxForce);
     }
 
-    float GetMouseJointMaxForce(void* joint) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetMouseJointMaxForce(void* joint) {
         b2MouseJoint* mouseJoint = static_cast<b2MouseJoint*>(joint);
         return mouseJoint->GetMaxForce();
     }
@@ -265,7 +265,7 @@ extern "C" {
 
 // Generic Joint
 extern "C" {
-    void* CreateGenericJoint(void* world, void* bodyA, void* bodyB,
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateGenericJoint(void* world, void* bodyA, void* bodyB,
                              float anchorAX, float anchorAY,
                              float anchorBX, float anchorBY,
                              float axisX, float axisY, bool collideConnected) {

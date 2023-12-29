@@ -8,7 +8,7 @@
 // Particle Groups
 extern "C" {
     // CreateParticleGroup
-    void* CreateParticleGroup(void* particlePointer, int types, int groupTypes,
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateParticleGroup(void* particlePointer, int types, int groupTypes,
                               float angle, float strength, float angularVelocity,
                               float linearVelocityX, float linearVelocityY,
                               void* shape, int r, int g, int b, int a,
@@ -34,27 +34,27 @@ extern "C" {
     }
 
     // DeleteParticlesInGroup
-    void DeleteParticlesInGroup(void* particleGroupPointer) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API DeleteParticlesInGroup(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2ParticleSystem* particleSystem = particleGroup->GetParticleSystem();
         particleSystem->DestroyParticleGroup(particleGroup);
     }
 
     // GetParticlesInGroupCount
-    int GetParticlesInGroupCount(void* particleGroupPointer) {
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetParticlesInGroupCount(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         return particleGroup->GetParticleCount();
     }
 
     // SetParticleFlagsInGroup
-    void SetParticleFlagsInGroup(void* particleGroupPointer, void* particleSystemPointer, int particleFlags) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetParticleFlagsInGroup(void* particleGroupPointer, void* particleSystemPointer, int particleFlags) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         // Set the particle flags for the entire group
         particleGroup->SetGroupFlags(static_cast<uint32>(particleFlags));
     }
 
     // SetParticleLifetimesInGroup
-    void SetParticleLifetimesInGroup(void* particleGroupPointer, void* particleSystemPointer, int lifetime) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetParticleLifetimesInGroup(void* particleGroupPointer, void* particleSystemPointer, int lifetime) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2ParticleSystem* particleSystem = static_cast<b2ParticleSystem*>(particleSystemPointer);
 
@@ -70,26 +70,26 @@ extern "C" {
     }
 
     // ApplyForceToParticleGroup
-    void ApplyForceToParticleGroup(void* particleGroupPointer, float forceX, float forceY) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ApplyForceToParticleGroup(void* particleGroupPointer, float forceX, float forceY) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         particleGroup->ApplyForce(b2Vec2(forceX, forceY));
     }
 
     // ApplyLinearImpulseToParticleGroup
-    void ApplyLinearImpulseToParticleGroup(void* particleGroupPointer, float impulseX, float impulseY) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ApplyLinearImpulseToParticleGroup(void* particleGroupPointer, float impulseX, float impulseY) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         particleGroup->ApplyLinearImpulse(b2Vec2(impulseX, impulseY));
     }
 
     // SplitParticleGroup
-    void SplitParticleGroup(void* particleSystemPointer, void* groupPointer) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SplitParticleGroup(void* particleSystemPointer, void* groupPointer) {
         b2ParticleSystem* particleSystem = static_cast<b2ParticleSystem*>(particleSystemPointer);
         b2ParticleGroup* groupA = static_cast<b2ParticleGroup*>(groupPointer);
         particleSystem->SplitParticleGroup(groupA);
     }
 
     // JoinParticleGroups
-    void JoinParticleGroups(void* particleSystemPointer, void* groupAPointer, void* groupBPointer) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API JoinParticleGroups(void* particleSystemPointer, void* groupAPointer, void* groupBPointer) {
         b2ParticleSystem* particleSystem = static_cast<b2ParticleSystem*>(particleSystemPointer);
         b2ParticleGroup* groupA = static_cast<b2ParticleGroup*>(groupAPointer);
         b2ParticleGroup* groupB = static_cast<b2ParticleGroup*>(groupBPointer);
@@ -97,7 +97,7 @@ extern "C" {
     }
 
     // AreParticlesInGroup
-    int* AreParticlesInGroup(void* particleGroupPointer, int* indices) {
+    UNITY_INTERFACE_EXPORT int* UNITY_INTERFACE_API AreParticlesInGroup(void* particleGroupPointer, int* indices) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         int count = particleGroup->GetParticleCount();
         int* result = GetIntBuffer(count);
@@ -111,7 +111,7 @@ extern "C" {
     }
 
     // GetParticleGroupPosition
-    float* GetParticleGroupPosition(void* particleGroupPointer) {
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetParticleGroupPosition(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2Vec2 position = particleGroup->GetCenter();
         float* result = GetFloatBuffer(2);
@@ -121,7 +121,7 @@ extern "C" {
     }
 
     // GetParticleGroupCentroid
-    float* GetParticleGroupCentroid(void* particleGroupPointer) {
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetParticleGroupCentroid(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2Vec2 centroid = particleGroup->GetCenter();
         float* result = GetFloatBuffer(2);
@@ -131,7 +131,7 @@ extern "C" {
     }
 
     // GetParticleGroupVelocity
-    float* GetParticleGroupVelocity(void* particleGroupPointer) {
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetParticleGroupVelocity(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2Vec2 velocity = particleGroup->GetLinearVelocity();
         float* result = GetFloatBuffer(2);

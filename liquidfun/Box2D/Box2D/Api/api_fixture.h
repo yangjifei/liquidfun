@@ -7,7 +7,7 @@
 extern "C" {
 
     // AddFixture
-    void* AddFixture(void* bodyPointer, int shapeType, void* shapePointer, float density, float friction, float restitution, bool isSensor, int userData) {
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API AddFixture(void* bodyPointer, int shapeType, void* shapePointer, float density, float friction, float restitution, bool isSensor, int userData) {
         b2Body* body = static_cast<b2Body*>(bodyPointer);
         b2Shape* shape = static_cast<b2Shape*>(shapePointer);
 
@@ -22,7 +22,7 @@ extern "C" {
     }
 
     // GetFixtureInfo
-    float* GetFixtureInfo(void* fixturePointer) {
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetFixtureInfo(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         b2Vec2 position = fixture->GetBody()->GetPosition(); // Use GetPosition() for the body's origin
 
@@ -35,13 +35,13 @@ extern "C" {
     }
 
     // GetFixtureUserData
-    int GetFixtureUserData(void* fixturePointer) {
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureUserData(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return reinterpret_cast<int>(fixture->GetUserData());
     }
 
     // SetFixtureFilterData
-    void SetFixtureFilterData(void* fixturePointer, int16_t groupIndex, uint16_t categoryBits, uint16_t maskBits) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetFixtureFilterData(void* fixturePointer, int16_t groupIndex, uint16_t categoryBits, uint16_t maskBits) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         b2Filter filter = fixture->GetFilterData();
         filter.groupIndex = groupIndex;
@@ -51,81 +51,81 @@ extern "C" {
     }
 
     // GetFixtureGroupIndex
-    uint16_t GetFixtureGroupIndex(void* fixturePointer) {
+    uint16_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureGroupIndex(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return fixture->GetFilterData().groupIndex;
     }
 
     // GetFixtureCategoryBits
-    uint16_t GetFixtureCategoryBits(void* fixturePointer) {
+    uint16_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureCategoryBits(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return fixture->GetFilterData().categoryBits;
     }
 
     // GetFixtureMaskBits
-    uint16_t GetFixtureMaskBits(void* fixturePointer) {
+    uint16_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureMaskBits(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return fixture->GetFilterData().maskBits;
     }
 
     // TestPoint
-    bool TestPoint(void* fixturePointer, float x, float y) {
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API TestPoint(void* fixturePointer, float x, float y) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         b2Vec2 point(x, y);
         return fixture->TestPoint(point);
     }
 
     // SetFixtureIsSensor
-    void SetFixtureIsSensor(void* fixturePointer, bool flag) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetFixtureIsSensor(void* fixturePointer, bool flag) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         fixture->SetSensor(flag);
     }
 
     // GetFixtureIsSensor
-    bool GetFixtureIsSensor(void* fixturePointer) {
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureIsSensor(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return fixture->IsSensor();
     }
 
     // SetFixtureDensity
-    void SetFixtureDensity(void* fixturePointer, float density) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetFixtureDensity(void* fixturePointer, float density) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         fixture->SetDensity(density);
         fixture->GetBody()->ResetMassData();
     }
 
     // GetFixtureDensity
-    float GetFixtureDensity(void* fixturePointer) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureDensity(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return fixture->GetDensity();
     }
 
     // SetFixtureFriction
-    void SetFixtureFriction(void* fixturePointer, float friction) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetFixtureFriction(void* fixturePointer, float friction) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         fixture->SetFriction(friction);
     }
 
     // GetFixtureFriction
-    float GetFixtureFriction(void* fixturePointer) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureFriction(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return fixture->GetFriction();
     }
 
     // SetFixtureRestitution
-    void SetFixtureRestitution(void* fixturePointer, float restitution) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetFixtureRestitution(void* fixturePointer, float restitution) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         fixture->SetRestitution(restitution);
     }
 
     // GetFixtureRestitution
-    float GetFixtureRestitution(void* fixturePointer) {
+    float UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureRestitution(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         return fixture->GetRestitution();
     }
 
     // DeleteFixture
-    void DeleteFixture(void* bodyPointer, void* fixturePointer) {
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API DeleteFixture(void* bodyPointer, void* fixturePointer) {
         b2Body* body = static_cast<b2Body*>(bodyPointer);
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
         body->DestroyFixture(fixture);

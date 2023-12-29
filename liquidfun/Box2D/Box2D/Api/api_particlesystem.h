@@ -8,7 +8,7 @@
 extern "C"
 {
     // CreateParticleSystem
-    b2ParticleSystem *CreateParticleSystem(b2World *world, float radius, float damping, float gravityScale, int index)
+    UNITY_INTERFACE_EXPORT b2ParticleSystem* UNITY_INTERFACE_API CreateParticleSystem(b2World *world, float radius, float damping, float gravityScale, int index)
     {
         b2ParticleSystemDef particleSystemDef;
         particleSystemDef.radius = radius;
@@ -20,7 +20,7 @@ extern "C"
     }
 
     // CreateParticleSystem2
-    b2ParticleSystem *CreateParticleSystem2(b2World *world, float radius, float damping, float gravityScale, int index, float tennorm, float tenpres, float viscstr)
+    UNITY_INTERFACE_EXPORT b2ParticleSystem* UNITY_INTERFACE_API CreateParticleSystem2(b2World *world, float radius, float damping, float gravityScale, int index, float tennorm, float tenpres, float viscstr)
     {
         b2ParticleSystemDef particleSystemDef;
         particleSystemDef.radius = radius;
@@ -35,19 +35,19 @@ extern "C"
     }
 
     // SetParticleSystemIndex
-    void SetParticleSystemIndex(b2ParticleSystem *particleSystem, int index)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetParticleSystemIndex(b2ParticleSystem *particleSystem, int index)
     {
-        particleSystem->index = index;
+        particleSystem->systemIndex = index;
     }
 
     // GetParticleIterations
-    int GetParticleIterations(float gravity, float particleRadius, float timeStep)
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetParticleIterations(float gravity, float particleRadius, float timeStep)
     {
         return b2CalculateParticleIterations(gravity, particleRadius, timeStep);
     }
 
     // GetParticlePositions
-    float *GetParticlePositions(b2ParticleSystem *particleSystem)
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetParticlePositions(b2ParticleSystem *particleSystem)
     {
         const b2Vec2 *positions = particleSystem->GetPositionBuffer();
         int particleCount = particleSystem->GetParticleCount();
@@ -65,7 +65,7 @@ extern "C"
     }
 
     // GetParticlePositionsAndColors
-    float *GetParticlePositionsAndColors(b2ParticleSystem *particleSystem)
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetParticlePositionsAndColors(b2ParticleSystem *particleSystem)
     {
         const b2Vec2 *positions = particleSystem->GetPositionBuffer();
         const b2ParticleColor *colors = particleSystem->GetColorBuffer();
@@ -88,14 +88,14 @@ extern "C"
     }
 
     // GetParticlesDetails
-    float *GetParticlesDetails(b2ParticleSystem *particleSystem, bool position, bool color, bool age, bool weight, bool velocity, bool userdata)
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetParticlesDetails(b2ParticleSystem *particleSystem, bool position, bool color, bool age, bool weight, bool velocity, bool userdata)
     {
         const b2Vec2 *positions = particleSystem->GetPositionBuffer();
         const b2ParticleColor *colors = particleSystem->GetColorBuffer();
         const int32 *lifetimes = particleSystem->GetExpirationTimeBuffer();
         const float32 *weights = particleSystem->GetWeightBuffer();
         const b2Vec2 *velocities = particleSystem->GetVelocityBuffer();
-        const void **userDatas = particleSystem->GetUserDataBuffer();
+        void **userDatas = particleSystem->GetUserDataBuffer();
         int particleCount = particleSystem->GetParticleCount();
         int arraySize = (position ? 2 : 0) + (color ? 4 : 0) + (age ? 1 : 0) + (weight ? 1 : 0) + (velocity ? 2 : 0) + (userdata ? 1 : 0) + 1;
         float *result = GetFloatBuffer(arraySize);
@@ -140,19 +140,19 @@ extern "C"
     }
 
     // GetNumberOfParticles
-    int GetNumberOfParticles(b2ParticleSystem *particleSystem)
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetNumberOfParticles(b2ParticleSystem *particleSystem)
     {
         return particleSystem->GetParticleCount();
     }
 
     // DeleteParticleSystem
-    void DeleteParticleSystem(b2World *world, b2ParticleSystem *particleSystem)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API DeleteParticleSystem(b2World *world, b2ParticleSystem *particleSystem)
     {
         world->DestroyParticleSystem(particleSystem);
     }
 
     // SetAllParticleFlags
-    void SetAllParticleFlags(b2ParticleSystem *particleSystem, int particleFlags)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetAllParticleFlags(b2ParticleSystem *particleSystem, int particleFlags)
     {
         for (int i = 0; i < particleSystem->GetParticleCount(); ++i)
         {
@@ -161,7 +161,7 @@ extern "C"
     }
 
     // SetParticleFlagsUpToLimit
-    void SetParticleFlagsUpToLimit(b2ParticleSystem *particleSystem, int particleFlags, int upperBound)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetParticleFlagsUpToLimit(b2ParticleSystem *particleSystem, int particleFlags, int upperBound)
     {
         int particleCount = particleSystem->GetParticleCount();
         for (int i = 0; i < std::min(upperBound, particleCount); ++i)
@@ -171,19 +171,19 @@ extern "C"
     }
 
     // GetStuckCandidateCount
-    int GetStuckCandidateCount(b2ParticleSystem *particleSystem)
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetStuckCandidateCount(b2ParticleSystem *particleSystem)
     {
         return particleSystem->GetStuckCandidateCount();
     }
 
     // SetStuckThreshold
-    void SetStuckThreshold(b2ParticleSystem *particleSystem, int iterations)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetStuckThreshold(b2ParticleSystem *particleSystem, int iterations)
     {
         particleSystem->SetStuckThreshold(iterations);
     }
 
     // DestroyParticlesInShape
-    int DestroyParticlesInShape(b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation, bool callDestructionListener)
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API DestroyParticlesInShape(b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation, bool callDestructionListener)
     {
         b2Transform transform;
         transform.SetIdentity();
@@ -193,7 +193,7 @@ extern "C"
     }
 
     // GetParticlesInShape
-    int *GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation)
+    UNITY_INTERFACE_EXPORT int* UNITY_INTERFACE_API GetParticlesInShape(b2World *world, b2ParticleSystem *particleSystem, b2Shape *shape, float shapeX, float shapeY, float shapeRotation)
     {
         b2Transform transform;
         transform.SetIdentity();
@@ -221,19 +221,19 @@ extern "C"
     }
 
     // SetDestructionByAge
-    void SetDestructionByAge(b2ParticleSystem *particleSystem, bool isSet)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetDestructionByAge(b2ParticleSystem *particleSystem, bool isSet)
     {
         particleSystem->SetDestructionByAge(isSet);
     }
 
     // GetDestructionByAge
-    bool GetDestructionByAge(b2ParticleSystem *particleSystem)
+    bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetDestructionByAge(b2ParticleSystem *particleSystem)
     {
         return particleSystem->GetDestructionByAge();
     }
 
     // SetAllParticleLifetimes
-    void SetAllParticleLifetimes(b2ParticleSystem *particleSystem, float lifetime)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetAllParticleLifetimes(b2ParticleSystem *particleSystem, float lifetime)
     {
         for (int i = 0; i < particleSystem->GetParticleCount(); ++i)
         {
@@ -242,19 +242,19 @@ extern "C"
     }
 
     // GetMaxParticleCount
-    int GetMaxParticleCount(b2ParticleSystem *particleSystem)
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetMaxParticleCount(b2ParticleSystem *particleSystem)
     {
         return particleSystem->GetMaxParticleCount();
     }
 
     // SetMaxParticleCount
-    void SetMaxParticleCount(b2ParticleSystem *particleSystem, int maxParticleCount)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetMaxParticleCount(b2ParticleSystem *particleSystem, int maxParticleCount)
     {
         particleSystem->SetMaxParticleCount(maxParticleCount);
     }
 
     // GetParticleSystemContacts
-    int *GetParticleSystemContacts(b2ParticleSystem *particleSystem)
+    UNITY_INTERFACE_EXPORT int* UNITY_INTERFACE_API GetParticleSystemContacts(b2ParticleSystem *particleSystem)
     {
         auto userDataBuffer = particleSystem->GetUserDataBuffer();
         auto m_contactBuffer = particleSystem->GetContacts();
@@ -273,7 +273,7 @@ extern "C"
     }
 
     // GetParticleSystemBodyContacts
-    float *GetParticleSystemBodyContacts(b2ParticleSystem *particleSystem)
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetParticleSystemBodyContacts(b2ParticleSystem *particleSystem)
     {
         auto userDataBuffer = particleSystem->GetUserDataBuffer();
         auto m_contactBuffer = particleSystem->GetBodyContacts();
@@ -295,19 +295,19 @@ extern "C"
     }
 
     // GetParticleGroupCount
-    int GetParticleGroupCount(b2ParticleSystem *particleSystem)
+    int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetParticleGroupCount(b2ParticleSystem *particleSystem)
     {
         return particleSystem->GetParticleGroupCount();
     }
 
     // GetParticleGroupPointers
-    b2ParticleGroup *  const* GetParticleGroupPointers(b2ParticleSystem *particleSystem)
+    UNITY_INTERFACE_EXPORT b2ParticleGroup* const* UNITY_INTERFACE_API GetParticleGroupPointers(b2ParticleSystem *particleSystem)
     {
         return particleSystem->GetGroupBuffer();
     }
 
     // GetParticleGroupPointerForLargestGroup
-    b2ParticleGroup* GetParticleGroupPointerForLargestGroup(b2ParticleSystem* particleSystem)
+    UNITY_INTERFACE_EXPORT b2ParticleGroup* UNITY_INTERFACE_API GetParticleGroupPointerForLargestGroup(b2ParticleSystem* particleSystem)
     {
         b2ParticleGroup* largestGroup = nullptr;
         int32 maxParticleCount = 0;

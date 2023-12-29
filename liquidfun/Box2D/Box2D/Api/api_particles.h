@@ -6,7 +6,7 @@
 
 extern "C"
 {
-    void CreateParticleInSystem(b2ParticleSystem* system, int32_t flags, float positionX, float positionY, float velocityX, float velocityY, int r, int g, int b, int a, float lifetime)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API CreateParticleInSystem(b2ParticleSystem* system, int32_t flags, float positionX, float positionY, float velocityX, float velocityY, int r, int g, int b, int a, float lifetime)
     {
         b2ParticleDef particleDef;
         particleDef.flags = static_cast<uint32>(flags);
@@ -18,7 +18,7 @@ extern "C"
         system->CreateParticle(particleDef);
     }
 
-    void SetSelectedParticleColor(b2ParticleSystem* particles, const int32_t* indexArray, int r, int g, int b, int a)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetSelectedParticleColor(b2ParticleSystem* particles, const int32_t* indexArray, int r, int g, int b, int a)
     {
         b2ParticleColor* colors = particles->GetColorBuffer();
         for (int32_t i = 0; i < indexArray[0]; ++i)
@@ -28,7 +28,7 @@ extern "C"
         }
     }
 
-    void SetSelectedParticleUserData(b2ParticleSystem* particles, const int32_t* indexArray, int userdata)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetSelectedParticleUserData(b2ParticleSystem* particles, const int32_t* indexArray, int userdata)
     {
         for (int32_t i = 0; i < indexArray[0]; ++i)
         {
@@ -40,7 +40,7 @@ extern "C"
         }
     }
 
-    void SetSelectedParticleFlags(b2ParticleSystem* particles, const int32_t* indexArray, int particleFlags)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetSelectedParticleFlags(b2ParticleSystem* particles, const int32_t* indexArray, int particleFlags)
     {
         for (int32_t i = 0; i < indexArray[0]; ++i)
         {
@@ -48,7 +48,7 @@ extern "C"
         }
     }
 
-    void DestroySelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API DestroySelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray)
     {
         for (int32_t i = 0; i < indexArray[0]; ++i)
         {
@@ -56,7 +56,7 @@ extern "C"
         }
     }
 
-    void ExplodeSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float CentreX, float CentreY, float Strength)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ExplodeSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float CentreX, float CentreY, float Strength)
     {
         b2Vec2 explosionCenter(CentreX, CentreY);
 
@@ -70,7 +70,7 @@ extern "C"
         }
     }
 
-    void ApplyForceToSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float forceX, float forceY)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ApplyForceToSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float forceX, float forceY)
     {
         b2Vec2 force(forceX, forceY);
 
@@ -80,7 +80,7 @@ extern "C"
         }
     }
 
-    void ApplyLinearImpulseToSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float impulseX, float impulseY)
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ApplyLinearImpulseToSelectedParticles(b2ParticleSystem* particles, const int32_t* indexArray, float impulseX, float impulseY)
     {
         b2Vec2 impulse(impulseX, impulseY);
 
@@ -90,7 +90,7 @@ extern "C"
         }
     }
 
-    float* GetSelectedParticlesDetails(b2ParticleSystem* particles, const int32_t* indexArray, bool position, bool color, bool age, bool weight, bool velocity, bool userdata)
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetSelectedParticlesDetails(b2ParticleSystem* particles, const int32_t* indexArray, bool position, bool color, bool age, bool weight, bool velocity, bool userdata)
     {
         int32_t numParticles = indexArray[0];
         int32_t numInfoPerParticle = 9; // x, y, r, g, b, a, age, weight, userdata

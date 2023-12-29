@@ -98,7 +98,7 @@ extern "C"
         void **userDatas = particleSystem->GetUserDataBuffer();
         int particleCount = particleSystem->GetParticleCount();
         int arraySize = (position ? 2 : 0) + (color ? 4 : 0) + (age ? 1 : 0) + (weight ? 1 : 0) + (velocity ? 2 : 0) + (userdata ? 1 : 0) + 1;
-        float *result = GetFloatBuffer(arraySize);
+        float *result = GetFloatBuffer(particleCount*arraySize+1);
         result[0] = static_cast<float>(particleCount);
 
         int currentIndex = 1;

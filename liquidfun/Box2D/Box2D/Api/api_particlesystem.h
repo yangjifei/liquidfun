@@ -102,34 +102,49 @@ extern "C"
         result[0] = static_cast<float>(particleCount);
 
         int currentIndex = 1;
-        for (int i = 0; i < particleCount; ++i)
+        if (position)
         {
-            if (position)
+            for (int i = 0; i < particleCount; ++i)
             {
                 result[currentIndex++] = positions[i].x;
                 result[currentIndex++] = positions[i].y;
             }
-            if (color)
+        }
+        if (color)
+        {
+            for (int i = 0; i < particleCount; ++i)
             {
                 result[currentIndex++] = colors[i].r;
                 result[currentIndex++] = colors[i].g;
                 result[currentIndex++] = colors[i].b;
                 result[currentIndex++] = colors[i].a;
             }
-            if (age)
+        }
+        if (age)
+        {
+            for (int i = 0; i < particleCount; ++i)
             {
                 result[currentIndex++] = lifetimes[i];
             }
-            if (weight)
+        }
+        if (weight)
+        {
+            for (int i = 0; i < particleCount; ++i)
             {
                 result[currentIndex++] = weights[i];
             }
-            if (velocity)
+        }
+        if (velocity)
+        {
+            for (int i = 0; i < particleCount; ++i)
             {
                 result[currentIndex++] = velocities[i].x;
                 result[currentIndex++] = velocities[i].y;
             }
-            if (userdata)
+        }
+        if (userdata)
+        {
+            for (int i = 0; i < particleCount; ++i)
             {
                 int32 userDataFloat = reinterpret_cast<int>(userDatas[i]);
                 result[currentIndex++] = userDataFloat;

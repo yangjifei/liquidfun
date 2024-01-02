@@ -22,8 +22,8 @@ class RaycastCallback : public b2RayCastCallback
 public:
     b2GrowableBuffer<RaycastResult> results;
     bool shouldQueryParticleSystem = false;
-    int fixtureCount;
-    int particleCount;
+    int fixtureCount=0;
+    int particleCount=0;
     RaycastCallback(b2GrowableBuffer<RaycastResult> results, bool shouldQueryParticleSystem = false)
         : results(results), shouldQueryParticleSystem(shouldQueryParticleSystem) {}
 

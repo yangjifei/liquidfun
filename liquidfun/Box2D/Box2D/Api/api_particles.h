@@ -93,7 +93,7 @@ extern "C"
     UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetSelectedParticlesDetails(b2ParticleSystem* particles, const int32_t* indexArray, bool position, bool color, bool age, bool weight, bool velocity, bool userdata)
     {
         int32_t numParticles = indexArray[0];
-        int32_t numInfoPerParticle = 9; // x, y, r, g, b, a, age, weight, userdata
+        int32_t numInfoPerParticle = 11; // x, y, r, g, b, a, age, weight, userdata,particleVelocity
 
         float* details = GetFloatBuffer(numParticles * numInfoPerParticle);
 

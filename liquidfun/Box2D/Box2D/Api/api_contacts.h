@@ -48,11 +48,16 @@ public:
     float* UpdateContactBuffer() {
 		size_t size = 3 + ff * fixFixContacts.size() + pf * partFixContacts.size() + pp * partPartContacts.size();
         if (preSize==-1) {
-            buffer = (float*)malloc(size);
+            buffer = (float*)malloc(size*sizeof(float));
 			preSize = size;
         }
 		if(size>preSize){
-			buffer = (float*)realloc(buffer, size);
+			auto t=	(float*)realloc(buffer, size * sizeof(float));
+			if (t!=0)
+			{
+				buffer = t;
+			}
+			preSize = size;
 		}
 		buffer[0] = fixFixContacts.size();
 		buffer[1] = partFixContacts.size();

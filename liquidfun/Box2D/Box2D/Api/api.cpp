@@ -20,7 +20,11 @@ void CheckBufferSize(int size){
         api_buffer = malloc(size);
     }else{
         if(size > api_buffer_size){
-            api_buffer = realloc(api_buffer, size);
+            void* newp = realloc(api_buffer, size);
+            if (newp!=0)
+            {
+                api_buffer = newp;
+            }
         }
     }
     api_buffer_size = size;

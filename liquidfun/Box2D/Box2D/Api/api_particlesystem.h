@@ -97,7 +97,7 @@ extern "C"
         const b2Vec2 *velocities = particleSystem->GetVelocityBuffer();
         void **userDatas = particleSystem->GetUserDataBuffer();
         int particleCount = particleSystem->GetParticleCount();
-        int arraySize = (position ? 2 : 0) + (color ? 4 : 0) + (age ? 1 : 0) + (weight ? 1 : 0) + (velocity ? 2 : 0) + (userdata ? 1 : 0) + 1;
+        int arraySize = (position ? 2 : 0) + (color ? 4 : 0) + (age ? 1 : 0) + (weight ? 1 : 0) + (velocity ? 2 : 0) + (userdata ? 1 : 0);
         float *result = GetFloatBuffer(particleCount*arraySize+1);
         result[0] = static_cast<float>(particleCount);
 
@@ -278,7 +278,7 @@ extern "C"
         auto userDataBuffer = particleSystem->GetUserDataBuffer();
         auto m_contactBuffer = particleSystem->GetBodyContacts();
         int32 count = particleSystem->GetBodyContactCount();
-        float *result = GetFloatBuffer(count * 4 + 1);
+        float *result = GetFloatBuffer(count * 7 + 1);
         result[0] = count;
 
         for (int i = 0; i < count; ++i)

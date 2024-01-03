@@ -97,17 +97,23 @@ extern "C"
         return shape;
     }
 
-    // GetPolyShapeCentroid
-    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetPolyShapeCentroid(IntPtr shapePointer)
-    {
-        b2Shape *shape = reinterpret_cast<b2Shape *>(shapePointer);
+    // Returns a 2 element float array containing the x and y positions of a polygon shape's centroid. The array must be marshalled before use.
+    UNITY_INTERFACE_EXPORT float* UNITY_INTERFACE_API GetPolyShapeCentroid(void* shape) {
+        b2PolygonShape* polyShape = static_cast<b2PolygonShape*>(shape);
 
-        b2MassData massData;
-        shape->ComputeMass(&massData, 1.0f);
+        // Check if the shape pointer is valid
+        if (!polyShape) {
+            // Handle the case where the pointer is invalid
+            return nullptr;
+        }
 
-        float *centroidArray = GetFloatBuffer(2);
-        centroidArray[0] = massData.center.x;
-        centroidArray[1] = massData.center.y;
+        // Get the centroid of the polygon shape
+        b2Vec2 centroid = polyShape->m_centroid;
+
+        // Create a float array to hold the x and y positions
+        float* centroidArray = GetFloatBuffer(2);
+        centroidArray[0] = centroid.x;
+        centroidArray[1] = centroid.y;
 
         return centroidArray;
     }

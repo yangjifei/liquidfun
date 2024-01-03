@@ -40,8 +40,8 @@ struct b2ContactEdge;
 enum b2BodyType
 {
 	b2_staticBody = 0,
-	b2_kinematicBody,
-	b2_dynamicBody
+	b2_dynamicBody,
+	b2_kinematicBody
 
 	// TODO_ERIN
 	//b2_bulletBody,
@@ -360,6 +360,7 @@ public:
 
 	/// Get the list of all fixtures attached to this body.
 	b2Fixture* GetFixtureList();
+	int32 GetFixtureCount();
 	const b2Fixture* GetFixtureList() const;
 
 	/// Get the list of all joints attached to this body.
@@ -709,6 +710,11 @@ inline bool b2Body::IsSleepingAllowed() const
 inline b2Fixture* b2Body::GetFixtureList()
 {
 	return m_fixtureList;
+}
+
+inline int32 b2Body::GetFixtureCount()
+{
+	return m_fixtureCount;
 }
 
 inline const b2Fixture* b2Body::GetFixtureList() const

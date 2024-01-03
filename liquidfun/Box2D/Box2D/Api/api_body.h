@@ -68,11 +68,28 @@ extern "C" {
         return body->IsActive();
     }
 
+    UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API GetBodyFixtures(void* body) {
+        b2Body* b2BodyPtr = static_cast<b2Body*>(body);
+
+        // Check if the body pointer is valid
+        if (!b2BodyPtr) {
+            // Return null or an appropriate error code based on your design
+            return nullptr;
+        }
+
+        // Get the fixture list of the body
+        int* result = GetIntBuffer(b2BodyPtr->GetFixtureCount());
+        int index = 0;
+        for (b2Fixture* f = b2BodyPtr->GetFixtureList(); f; f = f->GetNext()) {
+            result[index++] = reinterpret_cast<int>(f);
+        }
+        // Return the pointer to the fixture list
+        return result;
+    }
     // GetBodyFixturesCount
     void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyFixturesCount(b2Body* body, int& count) {
-        count = body->GetFixtureList() ? 1 : 0;
+        count = body->GetFixtureCount();
     }
-
     // SetBodyType
     void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetBodyType(b2Body* body, int type) {
         body->SetType(static_cast<b2BodyType>(type));
@@ -135,6 +152,124 @@ extern "C" {
             contacts[index++] = reinterpret_cast<int>(contactEdge->other->GetUserData());
             contactEdge = contactEdge->next;
         }
+    }
+
+    // Deletes a body. This automatically deletes all associated shapes and joints. This function is locked during callbacks.
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API DeleteBody(void* worldPointer, void* bodyPointer) {
+        b2World* world = static_cast<b2World*>(worldPointer);
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the world and body pointers are valid
+        if (!world || !body) {
+            // Handle the case where either pointer is invalid
+            return;
+        }
+
+        // Destroy the body in the world
+        world->DestroyBody(body);
+    }
+
+    // Apply an angular impulse to a body.
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API ApplyAngularImpulseToBody(void* bodyPointer, float impulse, bool wake) {
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the body pointer is valid
+        if (!body) {
+            // Handle the case where the pointer is invalid
+            return;
+        }
+
+        // Apply the angular impulse to the body
+        body->ApplyAngularImpulse(impulse, wake);
+    }
+
+    // Apply a force to a body.
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API ApplyForceToBody(void* bodyPointer, float forceX, float forceY, float pointX, float pointY, bool wake) {
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the body pointer is valid
+        if (!body) {
+            // Handle the case where the pointer is invalid
+            return;
+        }
+
+        // Apply the force to the body
+        b2Vec2 force(forceX, forceY);
+        b2Vec2 point(pointX, pointY);
+        body->ApplyForce(force, point, wake);
+    }
+
+    // Apply a linear impulse to a body.
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API ApplyLinearImpulseToBody(void* bodyPointer, float impulseX, float impulseY, float pointX, float pointY, bool wake) {
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the body pointer is valid
+        if (!body) {
+            // Handle the case where the pointer is invalid
+            return;
+        }
+
+        // Apply the linear impulse to the body
+        b2Vec2 impulse(impulseX, impulseY);
+        b2Vec2 point(pointX, pointY);
+        body->ApplyLinearImpulse(impulse, point, wake);
+    }
+
+    // Apply a torque to a body.
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API ApplyTorqueToBody(void* bodyPointer, float torque, bool wake) {
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the body pointer is valid
+        if (!body) {
+            // Handle the case where the pointer is invalid
+            return;
+        }
+
+        // Apply the torque to the body
+        body->ApplyTorque(torque, wake);
+    }
+
+    // Returns the mass of a body.
+    UNITY_INTERFACE_EXPORT float UNITY_INTERFACE_API GetBodyMass(void* bodyPointer) {
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the body pointer is valid
+        if (!body) {
+            // Handle the case where the pointer is invalid
+            return 0.0f;
+        }
+
+        // Return the mass of the body
+        return body->GetMass();
+    }
+
+    // Returns the inertia of a body.
+    UNITY_INTERFACE_EXPORT float UNITY_INTERFACE_API GetBodyInertia(void* bodyPointer) {
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the body pointer is valid
+        if (!body) {
+            // Handle the case where the pointer is invalid
+            return 0.0f;
+        }
+
+        // Return the inertia of the body
+        return body->GetInertia();
+    }
+
+    // Set the position of the body's origin and rotation. Manipulating a body's transform may cause non-physical behavior.
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API SetBodyTransform(void* bodyPointer, float xPos, float yPos, float angle) {
+        b2Body* body = static_cast<b2Body*>(bodyPointer);
+
+        // Check if the body pointer is valid
+        if (!body) {
+            // Handle the case where the pointer is invalid
+            return;
+        }
+
+        // Set the transform of the body
+        b2Vec2 position(xPos, yPos);
+        body->SetTransform(position, angle);
     }
 
     // SetBodyLinearDamping

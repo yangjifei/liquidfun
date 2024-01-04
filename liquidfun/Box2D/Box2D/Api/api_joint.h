@@ -157,12 +157,10 @@ extern "C" {
 // Pulley Joints
 extern "C" {
 
-    UNITY_INTERFACE_EXPORT b2PulleyJoint* UNITY_INTERFACE_API CreatePulleyJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, b2Vec2 groundAnchorA, b2Vec2 groundAnchorB, b2Vec2 anchorA, b2Vec2 anchorB, float ratio, float lengthA, float lengthB, bool collideConnected) {
+    UNITY_INTERFACE_EXPORT b2PulleyJoint* UNITY_INTERFACE_API CreatePulleyJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, b2Vec2 groundAnchorA, b2Vec2 groundAnchorB, b2Vec2 anchorA, b2Vec2 anchorB, float ratio, bool collideConnected) {
         b2PulleyJointDef jointDef;
         jointDef.Initialize(bodyA, bodyB, groundAnchorA, groundAnchorB, anchorA, anchorB, ratio);
         jointDef.collideConnected = collideConnected;
-        jointDef.lengthA = lengthA;
-        jointDef.lengthB = lengthB;
         return (b2PulleyJoint*)world->CreateJoint(&jointDef);
     }
 
@@ -211,7 +209,6 @@ extern "C" {
 extern "C" {
     UNITY_INTERFACE_EXPORT void* UNITY_INTERFACE_API CreateWheelJoint(void* world, void* bodyA, void* bodyB,
                             float anchorAX, float anchorAY,
-                            float anchorBX, float anchorBY,
                             float axisX, float axisY, bool collideConnected) {
         b2World* b2WorldPtr = static_cast<b2World*>(world);
         b2Body* b2BodyAPtr = static_cast<b2Body*>(bodyA);
@@ -219,7 +216,6 @@ extern "C" {
 
         b2WheelJointDef jointDef;
         jointDef.Initialize(b2BodyAPtr, b2BodyBPtr, b2Vec2(anchorAX, anchorAY), b2Vec2(axisX, axisY));
-        jointDef.localAnchorB.Set(anchorBX, anchorBY);
         jointDef.collideConnected = collideConnected;
 
         b2WheelJoint* wheelJoint = static_cast<b2WheelJoint*>(b2WorldPtr->CreateJoint(&jointDef));

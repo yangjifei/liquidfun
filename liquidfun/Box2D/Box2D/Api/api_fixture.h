@@ -37,7 +37,7 @@ extern "C" {
     // GetFixtureUserData
     int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetFixtureUserData(void* fixturePointer) {
         b2Fixture* fixture = static_cast<b2Fixture*>(fixturePointer);
-        return reinterpret_cast<int>(fixture->GetUserData());
+        return static_cast<int32>(reinterpret_cast<uintptr_t>(fixture->GetUserData()));
     }
 
     // SetFixtureFilterData

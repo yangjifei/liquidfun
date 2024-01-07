@@ -132,7 +132,7 @@ extern "C"
             if (userdata)
             {
                 // 在这里处理用户数据，例如，将用户数据转换为整数
-                details[dataIndex + 8] = reinterpret_cast<int>(particles->GetUserDataBuffer()[particleIndex]);
+                details[dataIndex + 8] = static_cast<int32>(reinterpret_cast<uintptr_t>(particles->GetUserDataBuffer()[particleIndex]));
             }
 
             if (velocity)

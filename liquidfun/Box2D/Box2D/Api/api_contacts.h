@@ -91,10 +91,10 @@ public:
 	/// Called when two fixtures begin to touch.
 	void BeginContact(b2Contact* contact) override {
 		fixFixContacts.push_back(
-		    ContactFixFix{reinterpret_cast<int>(contact->GetFixtureA()->GetBody()->GetUserData()),
-		                  reinterpret_cast<int>(contact->GetFixtureB()->GetBody()->GetUserData()),
-		                  reinterpret_cast<int>(contact->GetFixtureA()->GetUserData()),
-		                  reinterpret_cast<int>(contact->GetFixtureB()->GetUserData()),
+		    ContactFixFix{static_cast<int32>(reinterpret_cast<uintptr_t>(contact->GetFixtureA()->GetBody()->GetUserData())),
+		                  static_cast<int32>(reinterpret_cast<uintptr_t>(contact->GetFixtureB()->GetBody()->GetUserData())),
+		                  static_cast<int32>(reinterpret_cast<uintptr_t>(contact->GetFixtureA()->GetUserData())),
+		                  static_cast<int32>(reinterpret_cast<uintptr_t>(contact->GetFixtureB()->GetUserData())),
 		                  contact->GetManifold()->localNormal.x,
 		                  contact->GetManifold()->localNormal.y,
 		                  contact->GetManifold()->localPoint.x,
@@ -113,8 +113,8 @@ public:
 		partFixContacts.push_back(
 		    ContactPartFix{	particleSystem->systemIndex,
 							particleBodyContact->index,
-		                    reinterpret_cast<int>(particleBodyContact->body->GetUserData()),
-		                    reinterpret_cast<int>(particleBodyContact->fixture->GetUserData()),
+		                    static_cast<int32>(reinterpret_cast<uintptr_t>(particleBodyContact->body->GetUserData())),
+		                    static_cast<int32>(reinterpret_cast<uintptr_t>(particleBodyContact->fixture->GetUserData())),
 		                    particleBodyContact->normal.x,
 		                    particleBodyContact->normal.y});
 	}

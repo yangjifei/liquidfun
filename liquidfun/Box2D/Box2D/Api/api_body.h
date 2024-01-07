@@ -81,7 +81,7 @@ extern "C" {
         int* result = GetIntBuffer(b2BodyPtr->GetFixtureCount());
         int index = 0;
         for (b2Fixture* f = b2BodyPtr->GetFixtureList(); f; f = f->GetNext()) {
-            result[index++] = reinterpret_cast<int>(f);
+            result[index++] = static_cast<int32>(reinterpret_cast<uintptr_t>(f));
         }
         // Return the pointer to the fixture list
         return result;
@@ -127,7 +127,7 @@ extern "C" {
 
     // GetBodyUserData
     int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyUserData(b2Body* body) {
-        return reinterpret_cast<int>(body->GetUserData());
+        return static_cast<int32>(reinterpret_cast<uintptr_t>(body->GetUserData()));
     }
 
     // GetBodyContactsCount
@@ -149,7 +149,7 @@ extern "C" {
         int index = 1;
         b2ContactEdge* contactEdge = body->GetContactList();
         while (contactEdge) {
-            contacts[index++] = reinterpret_cast<int>(contactEdge->other->GetUserData());
+            contacts[index++] = static_cast<int32>(reinterpret_cast<uintptr_t>(contactEdge->other->GetUserData()));
             contactEdge = contactEdge->next;
         }
     }

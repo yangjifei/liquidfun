@@ -31,8 +31,8 @@ public:
     {
         fixtureCount++;
         RaycastResult* result = &(results.Append());
-        result->bodyIndex = reinterpret_cast<int>(fixture->GetBody()->GetUserData());
-        result->fixtureIndex = reinterpret_cast<int>(fixture->GetUserData());
+        result->bodyIndex = static_cast<int32>(reinterpret_cast<uintptr_t>(fixture->GetBody()->GetUserData()));
+        result->fixtureIndex = static_cast<int32>(reinterpret_cast<uintptr_t>(fixture->GetUserData()));
         result->posX = point.x;
         result->posY = point.y;
         result->normalX = normal.x;
@@ -44,7 +44,7 @@ public:
     float32 ReportParticle(const b2ParticleSystem* particleSystem, int32 index, const b2Vec2& point, const b2Vec2& normal, float32 fraction) override {
         particleCount++;
         RaycastResult* result = &(results.Append());
-        result->bodyIndex = reinterpret_cast<int>(particleSystem->GetUserDataBuffer()[index]);
+        result->bodyIndex = static_cast<int32>(reinterpret_cast<uintptr_t>(particleSystem->GetUserDataBuffer()[index]));
         result->fixtureIndex = -1;  // 在粒子与fixture的碰撞中，fixtureIndex为-1
         result->posX = point.x;
         result->posY = point.y;

@@ -146,7 +146,7 @@ extern "C"
         {
             for (int i = 0; i < particleCount; ++i)
             {
-                int32 userDataFloat = reinterpret_cast<int>(userDatas[i]);
+                int32 userDataFloat = static_cast<int32>(reinterpret_cast<uintptr_t>(userDatas[i]));
                 result[currentIndex++] = userDataFloat;
             }
         }
@@ -281,8 +281,8 @@ extern "C"
         {
             result[4 * i + 1] = m_contactBuffer[i].GetIndexA();
             result[4 * i + 2] = m_contactBuffer[i].GetIndexB();
-            result[4 * i + 3] = reinterpret_cast<int>(userDataBuffer[m_contactBuffer[i].GetIndexA()]);
-            result[4 * i + 4] = reinterpret_cast<int>(userDataBuffer[m_contactBuffer[i].GetIndexB()]);
+            result[4 * i + 3] = static_cast<int32>(reinterpret_cast<uintptr_t>(userDataBuffer[m_contactBuffer[i].GetIndexA()]));
+            result[4 * i + 4] = static_cast<int32>(reinterpret_cast<uintptr_t>(userDataBuffer[m_contactBuffer[i].GetIndexB()]));
         }
         return result;
     }
@@ -299,9 +299,9 @@ extern "C"
         for (int i = 0; i < count; ++i)
         {
             result[7 * i + 1] = static_cast<float>(m_contactBuffer[i].index);
-            result[7 * i + 2] = reinterpret_cast<int>(userDataBuffer[m_contactBuffer[i].index]);
-            result[7 * i + 3] = reinterpret_cast<int>(m_contactBuffer[i].body->GetUserData());
-            result[7 * i + 4] = reinterpret_cast<int>(m_contactBuffer[i].fixture->GetUserData());
+            result[7 * i + 2] = static_cast<int32>(reinterpret_cast<uintptr_t>(userDataBuffer[m_contactBuffer[i].index]));
+            result[7 * i + 3] = static_cast<int32>(reinterpret_cast<uintptr_t>(m_contactBuffer[i].body->GetUserData()));
+            result[7 * i + 4] = static_cast<int32>(reinterpret_cast<uintptr_t>(m_contactBuffer[i].fixture->GetUserData()));
             result[7 * i + 5] = m_contactBuffer[i].normal.x;
             result[7 * i + 6] = m_contactBuffer[i].normal.y;
             result[7 * i + 7] = m_contactBuffer[i].weight;

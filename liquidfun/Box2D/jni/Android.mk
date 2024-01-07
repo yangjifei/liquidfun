@@ -24,9 +24,20 @@ source_directories:=\
 	Dynamics/Contacts \
 	Dynamics/Joints \
 	Particle \
-	Rope
+	Rope \
+	Api
 
-include $(LOCAL_PATH)/b2_android_common.mk
+ifneq (,$(findstring armeabi-v7a,$(APP_ABI)))
+  LOCAL_ARM_NEON := true
+  b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
+  b2_extensions := cpp cpp.neon
+else ifneq (,$(findstring arm64-v8a,$(APP_ABI)))
+  LOCAL_ARM_NEON := true
+  b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
+  b2_extensions := cpp cpp.neon
+else
+  b2_extensions := cpp
+endif
 
 # Conditionally include libstlport (so include path is added to CFLAGS) if
 # it's not being built using the NDK build process.
@@ -68,7 +79,7 @@ $(eval \
         $(wildcard $(LOCAL_PATH)/Box2D/$(source_dir)/*.h)))
   LOCAL_CFLAGS:=$(if $(APP_DEBUG),-DDEBUG=1,-DDEBUG=0) $(b2_cflags)
   LOCAL_EXPORT_C_INCLUDES:=$(LOCAL_PATH)
-  LOCAL_ARM_MODE:=arm
+  # LOCAL_ARM_MODE:=arm
   $$(call add-stlport-includes))
 endef
 

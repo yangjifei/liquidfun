@@ -15,9 +15,15 @@
 # 3. This notice may not be removed or altered from any source distribution.
 
 ifneq (,$(findstring armeabi-v7a,$(APP_ABI)))
+  LOCAL_ARM_NEON := true
+  b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
+  b2_extensions := cpp s
+else ifneq (,$(findstring arm64-v8a,$(APP_ABI)))
+  LOCAL_ARM_NEON := true
   b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
   b2_extensions := cpp s
 else
   b2_extensions := cpp
 endif
+
 

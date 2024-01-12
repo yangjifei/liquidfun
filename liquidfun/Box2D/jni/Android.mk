@@ -27,16 +27,20 @@ source_directories:=\
 	Rope \
 	Api
 
-ifneq (,$(findstring armeabi-v7a,$(APP_ABI)))
-  LOCAL_ARM_NEON := true
-  b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
-  b2_extensions := cpp cpp.neon
-else ifneq (,$(findstring arm64-v8a,$(APP_ABI)))
-  LOCAL_ARM_NEON := true
-  b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
-  b2_extensions := cpp cpp.neon
+ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
+    LOCAL_ARM_NEON := true
+    b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
+    b2_extensions := cpp v7.s
+    LOCAL_CFLAGS += -march=armv7-a
 else
-  b2_extensions := cpp
+ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
+    LOCAL_ARM_NEON := true
+    b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
+    b2_extensions := cpp v8.s
+    LOCAL_CFLAGS += -march=armv8-a
+else
+    $(error Unsupported architecture: $(TARGET_ARCH_ABI))
+endif
 endif
 
 # Conditionally include libstlport (so include path is added to CFLAGS) if
@@ -79,7 +83,7 @@ $(eval \
         $(wildcard $(LOCAL_PATH)/Box2D/$(source_dir)/*.h)))
   LOCAL_CFLAGS:=$(if $(APP_DEBUG),-DDEBUG=1,-DDEBUG=0) $(b2_cflags)
   LOCAL_EXPORT_C_INCLUDES:=$(LOCAL_PATH)
-  # LOCAL_ARM_MODE:=arm
+  LOCAL_ARM_MODE:=arm
   $$(call add-stlport-includes))
 endef
 

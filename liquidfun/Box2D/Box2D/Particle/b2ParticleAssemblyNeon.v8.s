@@ -94,10 +94,23 @@ FindContacts_PostProcess:
         fsub v1.4s, v12.4s, v1.4s    // v1 = weight = 1 - dist / diameter
 
         mov               x8, #20        // x8 = 20 = sizeof(b2ParticleContact)
-        vst4.32          {v0.4s[0], v1.4s[0], v2.4s[0], v3.4s[0]}, [x4], x8
-        vst4.32          {v0.4s[1], v1.s[1], v2.s[1], v3.s[1]}, [x4], x8
-        vst4.32          {v0.4s[0], v1.s[0], v2.s[0], v3.s[0]}, [x4], x8
-        vst4.32          {v0.4s[1], v1.s[1], v2.s[1], v3.s[1]}, [x4], x8
+        // 第一步：交换v0和v1的元素
+        trn1 v4.4s, v0.4s, v1.4s  // v4: a0, b0, a2, b2
+        trn2 v5.4s, v0.4s, v1.4s  // v5: a1, b1, a3, b3
+        // 第二步：交换v2和v3的元素
+        trn1 v6.4s, v2.4s, v3.4s  // v6: c0, d0, c2, d2
+        trn2 v7.4s, v2.4s, v3.4s  // v7: c1, d1, c3, d3
+        // 第三步：交换v4和v6的元素
+        trn1 v0.2d, v4.2d, v6.2d  // v0: a0, b0, c0, d0
+        trn2 v2.2d, v4.2d, v6.2d  // v2: a2, b2, c2, d2
+        // 第四步：交换v5和v7的元素
+        trn1 v1.2d, v5.2d, v7.2d  // v1: a1, b1, c1, d1
+        trn2 v3.2d, v5.2d, v7.2d  // v3: a3, b3, c3, d3
+
+        st1 {v0.4s}, [x4], x8
+        st1 {v1.4s}, [x4], x8
+        st1 {v2.4s}, [x4], x8
+        st1 {v3.4s}, [x4], x8
 
         mov               x8, #12        // x8 = 12 = sizeof(FindContactInput)
 
@@ -114,7 +127,7 @@ FindContacts_PostProcess:
         add               x3, x3, #16
         add               x5, x5, #4          // numContacts += 4
 
-        st1               {v9.4s, v10.4s, v11.4s}, [x4], #48
+        st1 {v9.4s, v10.4s, v11.4s}, [x4]
 
         ret
 
@@ -133,8 +146,11 @@ CONST_IS_CLOSE_TABLE_INDICES:
         .align   4
         .global   FindContactsFromChecks_Simd
 FindContactsFromChecks_Simd:
-        stp               x29, x30, [sp, #-16]!
-        mov               x29, sp
+        stp x4, x5, [sp, #-16]!
+        stp x6, x7, [sp, #-16]!
+        stp x8, x9, [sp, #-16]!
+        stp x10, x11, [sp, #-16]!
+        stp x30, xzr, [sp, #-16]!
 
         // Load constants from registers and stack.
         dup               v15.4s, w3  // v15 = particleDiameterSq
@@ -167,23 +183,27 @@ FindContactsFromChecks_Simd:
         // x10 <== Address of 'position', the current particle position
         // x11 <== Address of '&comparator[0]', the first particle position we
         //         compare against.
-        ldr               w10, [x1], #4    // x10 = positionIndex|comparatorIndex
-        mul               x11, x10, x8     // x11 = address of first comparator
-        mul               x10, x10, x8     // x10 = address of current input
-        add               x12, x11, #24    // x12 = address of third comparator
+        //uxtw x10, w10         // Zero extend w10 to x10, making it 32 bits
+
+        ldrh w10, [x0]    // Load the first 16-bit number from position, increment x0 by 2
+        uxtw x10, w10
+        madd x11, x10, x8, x0 // x11 = address of first comparator
+        ldrh w10, [x0,#2]    // Load the second 16-bit number from position, increment x0 by 2
+        uxtw x10, w10
+        madd x10, x10, x8, x0 // x10 = address of current input
+        add x12, x11, #24     // x12 = address of third comparator
 
         // Exit if not enough space in output array (part 1)
         cmp               w5, w6
 
         // {v0, v1, v2} == index, positionX, positionY, splatted across vector
-        ld1r              {v0.4s}, [x10]
-        ld1r              {v1.4s}, [x10, #4]
-        ld1r              {v2.4s}, [x10, #8]
+        // one to all
+        ld3r              {v0.4s,v1.4s,v2.4s}, [x10]
 
         // {v8, v9, v10} == comparatorIndices, comparatorPosX and comparatorPosY
         //                 positions we compare against (positionX, positionY)
-        ld1              {v8.4s, v9.4s, v10.4s}, [x11]
-        ld1              {v8.4s, v9.4s, v10.4s}, [x12]
+        // one by one
+        ld3              {v8.4s, v9.4s, v10.4s}, [x11]
 
         // v0 = packedIndices -- indices output to b2ParticleContact
         // v1 = distBtParticlesSq -- will be used to calculate weight
@@ -191,7 +211,7 @@ FindContactsFromChecks_Simd:
         // v3 = diffY -- will be used to calculate normal
         fsub              v3.4s, v10.4s, v2.4s  // v3 = diffY = comparatorPosY - positionY
         fsub              v2.4s, v9.4s, v1.4s   // v2 = diffX = comparatorPosX - positionX
-        shl               v0.4s, v8.4s, #16     // v0 = comparatorIndex[i] << 16 | index
+        sli v0.4s, v8.4s, #16     // v0 = comparatorIndex[i] << 16 | index
         fmul              v1.4s, v3.4s, v3.4s   // v1 = diffX * diffX
         fmla              v1.4s, v2.4s, v2.4s   // v1 = diffX * diffX + diffY * diffY
 
@@ -201,12 +221,13 @@ FindContactsFromChecks_Simd:
         // Note: NEON to CPU register moves are slow (20 cyclds) on some
         // implementations of NEON.
         //   isClose = distBtParticlesSq < particleDiameterSq
-        fcmgt             v8.4s, v1.4s, v15.4s  // v8 == isClose
-        umov              w12, v8.s[0]          // v8[0] ==> x12.
+        fcmlt v8.4s, v1.4s, v15.4s    // v8 = isClose
+        tbl v8.8b, {v8.16b}, v13.8b  // v16 = isClose(packed)
+        mov w12, v16.s[0]            // v16[0] ==> w12
 
         // If not enough space in output array, grow it.
         // This is a heavy operation, but should happen rarely.
-        b.gt              .L_FindContacts_Output
+        b.le              .L_FindContacts_Output
         ldr               x9, [sp, #44]        // x9 = contacts
         str               w5, [x9, #4]         // contacts.count = numContacts
         ldr               x10, [x9, #0]        // x10 = contacts.data
@@ -238,36 +259,50 @@ FindContactsFromChecks_Simd:
 
 
 
-
-
 .L_FindContacts_Output:
-        // Store results to memory, but only results that are close
-        tst               x12, 0xFF
-        b.ne              .L_Store1stContact
-        st4               {v0.4s,v2.4s,v4.4s,v6.4s}, [x3], #16 // Store 1st contact
-.L_Store1stContact:
-        tst               x12, 0xFF00
-        b.ne              .L_Store2ndContact
-        st4               {v0.2s[1],v2.2s[1],v4.2s[1],v6.2s[1]}, [x3], #16 // Store 2nd contact
-.L_Store2ndContact:
-        tst               x12, 0xFF0000
-        b.ne              .L_Store3rdContact
-        st4               {v1.4s,v3.4s,v5.4s,v7.4s}, [x3], #16 // Store 3rd contact
-.L_Store3rdContact:
-        tst               x12, 0xFF000000
-        b.ne              .L_PostProcess
-        st4               {v1.2s[1],v3.2s[1],v5.2s[1],v7.2s[1]}, [x3], #16 // Store 4th contact
-.L_PostProcess:
-        // post-process the last four elements that have been output
-        // x12 = 5th element to not be post-processed yet
-        add               x12, x4, #64         // x12 = nextPostProcess
-        cmp               x3, x12
-        b.ge              FindContacts_PostProcess
-        // decrement loop counter// sets the 'gt' flag used in 'bgt' below
-        subs              x2, x2, #1
-        bgt               .L_FindContacts_MainLoop
+        // 第一步：交换v0和v1的元素
+        trn1 v4.4s, v0.4s, v1.4s  // v4: a0, b0, a2, b2
+        trn2 v5.4s, v0.4s, v1.4s  // v5: a1, b1, a3, b3
+        // 第二步：交换v2和v3的元素
+        trn1 v6.4s, v2.4s, v3.4s  // v6: c0, d0, c2, d2
+        trn2 v7.4s, v2.4s, v3.4s  // v7: c1, d1, c3, d3
+        // 第三步：交换v4和v6的元素
+        trn1 v0.2d, v4.2d, v6.2d  // v0: a0, b0, c0, d0
+        trn2 v2.2d, v4.2d, v6.2d  // v2: a2, b2, c2, d2
+        // 第四步：交换v5和v7的元素
+        trn1 v1.2d, v5.2d, v7.2d  // v1: a1, b1, c1, d1
+        trn2 v3.2d, v5.2d, v7.2d  // v3: a3, b3, c3, d3
 
+    // Store results to memory, but only results that are close
+    tst   w12, #0xFF
+    b.ne  .L_Skip_1st_Contact
+    st1 {v0.4s}, [x3],#16
 
+.L_Skip_1st_Contact:
+    tst   w12, #0xFF00
+    b.ne  .L_Skip_2nd_Contact
+    st1 {v1.4s}, [x3],#16
+
+.L_Skip_2nd_Contact:
+    tst   w12, #0xFF0000
+    b.ne  .L_Skip_3rd_Contact
+    st1 {v2.4s}, [x3],#16
+
+.L_Skip_3rd_Contact:
+    tst   w12, #0xFF000000
+    b.ne  .L_Skip_4th_Contact
+    st1 {v3.4s}, [x3],#16
+
+.L_Skip_4th_Contact:
+    // post-process the last four elements that have been output
+    // w12 = 5th element to not be post-processed yet
+    add   w12, w4, #64         // w12 = nextPostProcess
+    cmp   w3, w12
+    b.ge  FindContacts_PostProcess
+
+    // decrement loop counter // sets the 'gt' flag used in 'bgt' below
+    subs  w2, w2, #1
+    bgt   .L_FindContacts_MainLoop
 
 
 .L_FindContacts_PostProcessRemainingItems:
@@ -296,5 +331,9 @@ FindContactsFromChecks_Simd:
         str               w5, [x9, #4]         // contacts.count = numContacts
 
         // Return by popping the original lr into pc.
-        ldp               x29, x30, [sp], #16
+        ldp x30, xzr, [sp], #16
+        ldp x10, x11, [sp], #16
+        ldp x8, x9, [sp], #16
+        ldp x6, x7, [sp], #16
+        ldp x4, x5, [sp], #16
         ret

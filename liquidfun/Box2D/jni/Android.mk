@@ -95,6 +95,6 @@ include $(BUILD_SHARED_LIBRARY)
 
 # --- libliquidfun_static ---
 # Build static library.
-include $(CLEAR_VARS)
-$(call box2d-build,_static)
-include $(BUILD_STATIC_LIBRARY)
+# include $(CLEAR_VARS)
+# $(call box2d-build,_static)
+# include $(BUILD_STATIC_LIBRARY)

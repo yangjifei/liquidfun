@@ -19,10 +19,9 @@ LOCAL_PATH:=$(call my-dir)
 APP_PLATFORM:=android-21
 # APP_ABI:=armeabi-v7a arm64-v8a
 APP_ABI:=arm64-v8a
-APP_STL:=c++_shared
-APP_MODULES:=\
-	libliquidfun \
-	libliquidfun_static
+APP_STL:=c++_static
+# APP_MODULES:=libliquidfun libliquidfun_static
+APP_MODULES:=libliquidfun
 	
 APP_CPPFLAGS += -std=c++11
 APP_CFLAGS+=-Wall -Wno-long-long -Wno-variadic-macros

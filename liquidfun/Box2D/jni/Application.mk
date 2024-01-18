@@ -21,7 +21,7 @@ APP_PLATFORM:=android-21
 APP_ABI:=arm64-v8a
 APP_STL:=c++_static
 # APP_MODULES:=libliquidfun libliquidfun_static
-APP_MODULES:=libliquidfun
+APP_MODULES:=liquidfundll
 	
 APP_CPPFLAGS += -std=c++11
 APP_CFLAGS+=-Wall -Wno-long-long -Wno-variadic-macros

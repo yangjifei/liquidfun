@@ -56,7 +56,7 @@ endef
 # build target's name.
 define box2d-module
 $(eval \
-  LOCAL_MODULE:=libliquidfun$(1)
+  LOCAL_MODULE:=liquidfundll$(1)
   LOCAL_MODULE_TAGS:=optional
   LOCAL_COPY_HEADERS_TO:=liquidfun$(1))
 endef

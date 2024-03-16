@@ -6,10 +6,10 @@
 // Revolute Joints
 extern "C" {
 
-    UNITY_INTERFACE_EXPORT b2RevoluteJoint* UNITY_INTERFACE_API CreateRevoluteJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, b2Vec2 anchorA, b2Vec2 anchorB, bool collideConnected) {
+    UNITY_INTERFACE_EXPORT b2RevoluteJoint* UNITY_INTERFACE_API CreateRevoluteJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, float32 anchorAx, float32 anchorAy, float32 anchorBx,float32 anchorBy, bool collideConnected) {
         b2RevoluteJointDef jointDef;
-        jointDef.Initialize(bodyA, bodyB, anchorA);
-        jointDef.localAnchorB = anchorB;
+        jointDef.Initialize(bodyA, bodyB, b2Vec2(anchorAx,anchorAy));
+        jointDef.localAnchorB = b2Vec2(anchorBx,anchorBy);
         jointDef.collideConnected = collideConnected;
         return (b2RevoluteJoint*)world->CreateJoint(&jointDef);
     }
@@ -62,9 +62,9 @@ extern "C" {
 // Distance Joints
 extern "C" {
 
-    UNITY_INTERFACE_EXPORT b2DistanceJoint* UNITY_INTERFACE_API CreateDistanceJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, b2Vec2 anchorA, b2Vec2 anchorB, float length, bool collideConnected) {
+    UNITY_INTERFACE_EXPORT b2DistanceJoint* UNITY_INTERFACE_API CreateDistanceJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, float32 anchorAx, float32 anchorAy, float32 anchorBx,float32 anchorBy, float length, bool collideConnected) {
         b2DistanceJointDef jointDef;
-        jointDef.Initialize(bodyA, bodyB, anchorA, anchorB);
+        jointDef.Initialize(bodyA, bodyB, b2Vec2(anchorAx,anchorAy), b2Vec2(anchorBx,anchorBy));
         jointDef.collideConnected = collideConnected;
         jointDef.length = length;
         return (b2DistanceJoint*)world->CreateJoint(&jointDef);
@@ -98,9 +98,9 @@ extern "C" {
 // Prismatic Joints
 extern "C" {
 
-    UNITY_INTERFACE_EXPORT b2PrismaticJoint* UNITY_INTERFACE_API CreatePrismaticJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, b2Vec2 anchorA, b2Vec2 anchorB, float axisX, float axisY, bool collideConnected) {
+    UNITY_INTERFACE_EXPORT b2PrismaticJoint* UNITY_INTERFACE_API CreatePrismaticJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, float32 anchorAx, float32 anchorAy, float32 anchorBx,float32 anchorBy, float axisX, float axisY, bool collideConnected) {
         b2PrismaticJointDef jointDef;
-        jointDef.Initialize(bodyA, bodyB, anchorA, b2Vec2(axisX, axisY));
+        jointDef.Initialize(bodyA, bodyB, b2Vec2(anchorAx,anchorAy), b2Vec2(axisX, axisY));
         jointDef.collideConnected = collideConnected;
         return (b2PrismaticJoint*)world->CreateJoint(&jointDef);
     }
@@ -157,9 +157,9 @@ extern "C" {
 // Pulley Joints
 extern "C" {
 
-    UNITY_INTERFACE_EXPORT b2PulleyJoint* UNITY_INTERFACE_API CreatePulleyJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, b2Vec2 groundAnchorA, b2Vec2 groundAnchorB, b2Vec2 anchorA, b2Vec2 anchorB, float ratio, bool collideConnected) {
+    UNITY_INTERFACE_EXPORT b2PulleyJoint* UNITY_INTERFACE_API CreatePulleyJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, float32 groundAnchorAx, float32 groundAnchorAy, float32 groundAnchorBx,float32 groundAnchorBy, float32 anchorAx, float32 anchorAy, float32 anchorBx,float32 anchorBy, float ratio, bool collideConnected) {
         b2PulleyJointDef jointDef;
-        jointDef.Initialize(bodyA, bodyB, groundAnchorA, groundAnchorB, anchorA, anchorB, ratio);
+        jointDef.Initialize(bodyA, bodyB, b2Vec2(groundAnchorAx,groundAnchorAy), b2Vec2(groundAnchorBx,groundAnchorBy), b2Vec2(anchorAx,anchorAy), b2Vec2(anchorBx,anchorBy), ratio);
         jointDef.collideConnected = collideConnected;
         return (b2PulleyJoint*)world->CreateJoint(&jointDef);
     }

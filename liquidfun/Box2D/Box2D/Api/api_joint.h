@@ -9,7 +9,6 @@ extern "C" {
     UNITY_INTERFACE_EXPORT b2RevoluteJoint* UNITY_INTERFACE_API CreateRevoluteJoint(b2World* world, b2Body* bodyA, b2Body* bodyB, float32 anchorAx, float32 anchorAy, float32 anchorBx,float32 anchorBy, bool collideConnected) {
         b2RevoluteJointDef jointDef;
         jointDef.Initialize(bodyA, bodyB, b2Vec2(anchorAx,anchorAy));
-        jointDef.localAnchorB = b2Vec2(anchorBx,anchorBy);
         jointDef.collideConnected = collideConnected;
         return (b2RevoluteJoint*)world->CreateJoint(&jointDef);
     }
@@ -289,7 +288,6 @@ extern "C" {
 
         b2WeldJointDef jointDef;
         jointDef.Initialize(b2BodyAPtr, b2BodyBPtr, b2Vec2(anchorAX, anchorAY));
-        jointDef.localAnchorB.Set(anchorBX, anchorBY);
         jointDef.collideConnected = collideConnected;
 
         b2WeldJoint* weldJoint = static_cast<b2WeldJoint*>(b2WorldPtr->CreateJoint(&jointDef));
@@ -328,7 +326,6 @@ extern "C" {
 
         b2FrictionJointDef jointDef;
         jointDef.Initialize(b2BodyAPtr, b2BodyBPtr, b2Vec2(anchorAX, anchorAY));
-        jointDef.localAnchorB.Set(anchorBX, anchorBY);
         jointDef.collideConnected = collideConnected;
 
         b2FrictionJoint* frictionJoint = static_cast<b2FrictionJoint*>(b2WorldPtr->CreateJoint(&jointDef));
@@ -368,8 +365,8 @@ extern "C" {
         b2RopeJointDef jointDef;
         jointDef.bodyA = b2BodyAPtr;
         jointDef.bodyB = b2BodyBPtr;
-        jointDef.localAnchorA.Set(anchorAX, anchorAY);
-        jointDef.localAnchorB.Set(anchorBX, anchorBY);
+        jointDef.localAnchorA = b2BodyAPtr->GetLocalPoint(b2Vec2(anchorAX, anchorAY));
+        jointDef.localAnchorB = b2BodyBPtr->GetLocalPoint(b2Vec2(anchorBX, anchorBY));
         jointDef.maxLength = maxLength;
         jointDef.collideConnected = collideConnect;
 

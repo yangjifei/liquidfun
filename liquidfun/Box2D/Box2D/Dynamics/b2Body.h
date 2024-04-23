@@ -23,6 +23,8 @@
 #include <Box2D/Common/b2Math.h>
 #include <Box2D/Collision/Shapes/b2Shape.h>
 #include <memory>
+#include <Box2D/Common/b2GrowableBuffer.h>
+
 
 class b2Fixture;
 class b2Joint;
@@ -390,6 +392,10 @@ public:
 	/// Dump this body to a log file
 	void Dump();
 
+	void SetWeldGroup(int32 id);
+	void AddNoneCollideWeldGroup(int32 id);
+	void ClearWeldGroup();
+
 #if LIQUIDFUN_EXTERNAL_LANGUAGE_API
 public:
 	/// Get x-coordinate of position.
@@ -487,6 +493,9 @@ private:
 	float32 m_sleepTime;
 
 	void* m_userData;
+
+	int32 weldGroup=-1;
+	b2GrowableBuffer<int32> noneCollideWeldGroups;
 };
 
 inline b2BodyType b2Body::GetType() const
@@ -883,6 +892,18 @@ inline b2World* b2Body::GetWorld()
 inline const b2World* b2Body::GetWorld() const
 {
 	return m_world;
+}
+
+inline void b2Body::SetWeldGroup(int32 id){
+	weldGroup=id;
+}
+inline void b2Body::AddNoneCollideWeldGroup(int32 id){
+	int32& newId = noneCollideWeldGroups.Append();
+	newId=id;
+}
+inline void b2Body::ClearWeldGroup(){
+	weldGroup=-1;
+	noneCollideWeldGroups.SetCount(0);
 }
 
 #if LIQUIDFUN_EXTERNAL_LANGUAGE_API

@@ -321,4 +321,16 @@ extern "C" {
     bool UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetBodyFixedRotation(b2Body* body) {
         return body->IsFixedRotation();
     }
+
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetWeldGroup(b2Body* body, int group){
+        body->SetWeldGroup(group);
+    }
+
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API AddNoneCollideWeldGroup(b2Body* body, int group){
+        body->AddNoneCollideWeldGroup(group);
+    }
+
+    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ClearWeldGroup(b2Body* body){
+        body->ClearWeldGroup();
+    }
 }

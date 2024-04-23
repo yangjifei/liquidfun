@@ -23,7 +23,8 @@
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Dynamics/Joints/b2Joint.h>
 
-b2Body::b2Body(const b2BodyDef* bd, b2World* world)
+b2Body::b2Body(const b2BodyDef* bd, b2World* world):
+	noneCollideWeldGroups(world->m_blockAllocator)
 {
 	b2Assert(bd->position.IsValid());
 	b2Assert(bd->linearVelocity.IsValid());
@@ -416,6 +417,20 @@ bool b2Body::ShouldCollide(const b2Body* other) const
 			}
 		}
 	}
+
+	if (weldGroup!=-1)
+	{
+		auto noneCollideIenumerator = noneCollideWeldGroups.Begin();
+		while (noneCollideIenumerator!=noneCollideWeldGroups.End())
+		{
+			if (*noneCollideIenumerator == other->weldGroup)
+			{
+				return false;
+			}
+			noneCollideIenumerator++;
+		}
+	}
+	
 
 	return true;
 }

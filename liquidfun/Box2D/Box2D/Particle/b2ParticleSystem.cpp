@@ -2629,8 +2629,8 @@ void b2ParticleSystem::UpdateBodyContacts()
 			}
 		}
 	}
-	m_bodyContactBuffer.SetCount(0);
-	m_stuckParticleBuffer.SetCount(0);
+	m_bodyContactBuffer.Reserve(0);
+	m_stuckParticleBuffer.Reserve(0);
 
 	class UpdateBodyContactsCallback : public b2FixtureParticleQueryCallback
 	{
@@ -2737,7 +2737,7 @@ void b2ParticleSystem::RemoveSpuriousBodyContacts()
 					m_bodyContactBuffer.End(),
 					b2ParticleBodyContactRemovePredicate(this, &discarded));
 
-	m_bodyContactBuffer.SetCount(m_bodyContactBuffer.GetCount() - discarded);
+	m_bodyContactBuffer.Reserve(m_bodyContactBuffer.GetCount() - discarded);
 }
 
 bool b2ParticleSystem::BodyContactCompare(const b2ParticleBodyContact &lhs,

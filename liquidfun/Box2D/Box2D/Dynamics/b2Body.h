@@ -24,6 +24,7 @@
 #include <Box2D/Collision/Shapes/b2Shape.h>
 #include <memory>
 #include <Box2D/Common/b2GrowableBuffer.h>
+#include <vector>
 
 
 class b2Fixture;
@@ -495,7 +496,7 @@ private:
 	void* m_userData;
 
 	int32 weldGroup=-1;
-	b2GrowableBuffer<int32> noneCollideWeldGroups;
+	std::vector<int32> noneCollideWeldGroups;
 };
 
 inline b2BodyType b2Body::GetType() const
@@ -898,12 +899,11 @@ inline void b2Body::SetWeldGroup(int32 id){
 	weldGroup=id;
 }
 inline void b2Body::AddNoneCollideWeldGroup(int32 id){
-	int32& newId = noneCollideWeldGroups.Append();
-	newId=id;
+	noneCollideWeldGroups.push_back(id);
 }
 inline void b2Body::ClearWeldGroup(){
 	weldGroup=-1;
-	noneCollideWeldGroups.SetCount(0);
+	noneCollideWeldGroups.clear();
 }
 
 #if LIQUIDFUN_EXTERNAL_LANGUAGE_API

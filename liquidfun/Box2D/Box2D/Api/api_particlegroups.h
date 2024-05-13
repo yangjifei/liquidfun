@@ -37,6 +37,7 @@ extern "C" {
     void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API DeleteParticlesInGroup(void* particleGroupPointer) {
         b2ParticleGroup* particleGroup = static_cast<b2ParticleGroup*>(particleGroupPointer);
         b2ParticleSystem* particleSystem = particleGroup->GetParticleSystem();
+        particleGroup->DestroyParticles(false);
         particleSystem->DestroyParticleGroup(particleGroup);
     }
 

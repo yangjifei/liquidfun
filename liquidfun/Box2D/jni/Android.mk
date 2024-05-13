@@ -35,7 +35,7 @@ ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 else
 ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
     LOCAL_ARM_NEON := false
-    b2_cflags := -DLIQUIDFUN_SIMD_NEON -mfloat-abi=softfp -mfpu=neon
+    b2_cflags := -mfloat-abi=softfp -mfpu=neon
     b2_extensions := cpp v8.s
     LOCAL_CFLAGS += -march=armv8-a
 else
